@@ -61,8 +61,89 @@ Vertex.prototype = {
 };
 
 /*
-    Probabilistic Roadmap
+    Edge class and attributes
  */
+
+function Edge(first, second, dist, anId){
+    this.source = first;
+    this.destination = second;
+    this.weight = dist;
+    this.eid = anId;
+}
+
+Edge.prototype = {
+    constructor: Edge,
+    getWeight:function() {
+        return this.weight;
+    },
+
+    getSource:function() {
+        return this.source;
+    },
+
+    getDestination:function() {
+        return this.destination;
+    },
+
+    setId:function(anId) {
+        this.eid = anId;
+    },
+
+    getId:function() {
+        return this.eid;
+    },
+
+    setEdge:function(first, second, dist) {
+        this.source = first;
+        this.destination = second;
+        this.weight = dist;
+    }
+
+};
+
+/*
+    Graph class and attributes
+ */
+
+function Graph(vertList, edgeList) {
+    this.vertices = vertList;
+    this.edges = edgeList;
+}
+
+Graph.prototype = {
+    getVertices:function() {
+        return this.vertices;
+    },
+
+    getEdges:function() {
+        return this.edges;
+    }
+};
+
+/*
+    Probabilistic Roadmap (optimized)
+ */
+
+function SampleFree(xRange, yRange, obstacles){
+    var xcor, ycor;
+
+    do {
+        xcor = getRandomInt(0, xRange);
+        ycor = getRandomInt(0, yRange);
+        
+        var newCoords = [];
+        newCoords.push(xcor);
+        newCoords.push(ycor);
+    } while (clear(obstacles, newCoords) != true);
+
+    var newVert = new Vertex(xcor, ycor, String(xcor) + String(ycor));
+    return newVert;
+}
+
+function Near(aGraph, aVertex, aRadius){
+
+}
+
 function prm (obstacles, testP, destP, nMilestone, mNeighbor,
               xleft, xright, ybottom, ytop) {
 
@@ -72,23 +153,14 @@ function prm (obstacles, testP, destP, nMilestone, mNeighbor,
     var yRange = ytop - ybottom;
 
     // document.write(xRange);
-
     // Create milestones at random locations and add to
     // list of milestones
     for (var i = 0; i < nMilestone; i++) {
-        var xcor, ycor;
-        var newCoords = [];
-        do {
-            xcor = getRandomInt(0, xRange);
-            ycor = getRandomInt(0, yRange);
-            newCoords.push(xcor);
-            newCoords.push(ycor);
-        } while (clear(obstacles, newCoords) != true);
 
-        var newVert = new Vertex(xcor, ycor, String(xcor) + String(ycor));
+        var randVertex = SampleFree(xRange, yRange, obstacles);
 
-        document.write(newVert.hashCode() + ' ');
-        vertices.push(newVert);
+        document.write(randVertex.hashCode() + ' ');
+
 
     }
 
