@@ -1,5 +1,5 @@
 /**
- * Created by nav on 4/17/16.
+ * Created by nav on 4/18/16.
  */
 
 /*
@@ -18,7 +18,7 @@ String.prototype.hashCode = function(){
 }
 
 /*
-    Vertex class and attributes
+ Vertex class and attributes
  */
 function Vertex(somecor1, somecor2, someId) {
     this.xcor = somecor1;
@@ -61,7 +61,7 @@ Vertex.prototype = {
 };
 
 /*
-    Edge class and attributes
+ Edge class and attributes
  */
 
 function Edge(first, second, dist, anId){
@@ -102,7 +102,7 @@ Edge.prototype = {
 };
 
 /*
-    Graph class and attributes
+ Graph class and attributes
  */
 
 function Graph(vertList, edgeList) {
@@ -123,7 +123,7 @@ Graph.prototype = {
 };
 
 /*
-    Probabilistic Roadmap (optimized)
+    RRT
  */
 
 function SampleFree(xRange, yRange, obstacles){
@@ -164,98 +164,32 @@ function Near(aGraph, aVertex, aRadius){
     return vertInRadius;
 }
 
-function prm (obstacles, testP, destP, nMilestone, mNeighbor,
-              xleft, xright, ybottom, ytop) {
+function Nearest(aGraph, aPoint){
 
-    var vertices = [];
-    var edges = [];
-    var prmStarGraph = new Graph(vertices, edges);
+    var allVertices = aGraph.getVertices();
+    var nearestVertex = null;
+    var minDist = Math.POSITIVE_INFINITY;
+    for (var i = 0; i < allVertices; i++) {
+        var eachVertex = allVertices[i];
 
-    var xRange = xright - xleft;
-    var yRange = ytop - ybottom;
+        // Apply distance formula
+        var dist = Math.sqrt(Math.pow((eachVertex.getX() - aPoint[0]), 2) + Math.pow((eachVertex.getY() - aPoint[1]), 2));
 
-    var testVertex = new Vertex(testP[0], testP[1], String(testP[0]) + String(testP[1]));
-    vertices.push(testVertex);
-    // document.write(xRange);
-    // Create milestones at random locations and add to
-    // list of milestones
-    for (var i = 0; i < nMilestone; i++) {
-
-        var randVertex = SampleFree(xRange, yRange, obstacles);
-        //var randVertex = new Vertex(1, 1, 'vertexID');
-        vertices.push(randVertex);
-        //document.write(randVertex.hashCode() + ' ');
-        //document.write(vertices[i]);
-
-    }
-
-    // r(n) = (log(n) / n)^(1/d), n is number of milestones, d is dimension of space
-    var dim = 2;
-    //var connRadius = Math.pow((Math.log(nMilestone) / nMilestone), (1/dim));
-    var lebesgueVolume = xRange * yRange;
-    var unitCircleVolume = Math.PI;
-    var connRadius = (2 * Math.pow((1+(1/dim)), (1/dim))) * Math.pow((lebesgueVolume/unitCircleVolume),(1/dim));
-
-    document.write('connRadius: ' + connRadius);
-
-    for (var i = 0; i < vertices.length; i++){
-        var eachVertex = vertices[i];
-        var nearVertices = Near(prmStarGraph, eachVertex, connRadius);
-        //document.write('after near');
-
-        for (var j = 0; j < nearVertices.length; j++){
-            var theNearVertex = nearVertices[j];
-
-            // Distance formula
-            var dist = Math.sqrt(Math.pow((eachVertex.getX() - theNearVertex.getX()), 2)
-                + Math.pow((eachVertex.getY() - theNearVertex.getY()), 2));
-
-            if (link(obstacles, eachVertex, theNearVertex)){
-                var sToDestId = eachVertex.getId() + theNearVertex.getId();
-                var destToSId = theNearVertex.getId() + eachVertex.getId();
-
-                var sToDestExists = false;
-                var destToSExists = false;
-                for (var k = 0; k < edges.length; k++){
-                    //document.write(String(edges[k].getId() === sToDestId) + '\n');
-                    if (edges[k].getId() === sToDestId){
-                        sToDestExists = true;
-                    }
-
-                    if (edges[k].getId() === destToSId){
-                        destToSExists = true;
-                    }
-                }
-
-                if (sToDestExists == false && dist != 0) {
-                    edges.push(new Edge(eachVertex, theNearVertex, dist, eachVertex.getId() + theNearVertex.getId()));
-                }
-
-                if (destToSExists == false && dist != 0) {
-                    edges.push(new Edge(eachVertex, theNearVertex, dist, theNearVertex.getId() + eachVertex.getId()));
-                }
-            }
+        if (dist < minDist){
+            minDist = dist;
+            nearestVertex = allVertices[i];
         }
     }
 
-    //document.write('end');
-    return prmStarGraph;
+    return nearestVertex;
+}
 
-
-
-    //document.write(vertices);
+function Steer(pointX, pointY, parameterEta){
+    
 }
 
 /*
- Random int generator function adapted from Mozilla Developer Network page:
- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
- */
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-/*
-    Link and Clear
+ Link and Clear
  */
 
 function link(obstacles, testP, destP){
@@ -384,31 +318,3 @@ function clear(obstacles, testP){
 
     return true;
 }
-
-var obs = [];
-obs.push(2);
-obs.push(18);
-obs.push(1);
-
-var test = [];
-test.push(2);
-test.push(2);
-
-var dest = [];
-dest.push(2);
-dest.push(8);
-//document.write(obs);
-
-//document.write(clear(obs, test));
-
-//document.write(link(obs, test, dest));
-
-var someGraph = prm(obs, test, dest, 3, 2, 0, 22, 0, 22);
-var graphVertices = someGraph.getVertices();
-var graphEdges = someGraph.getEdges();
-for (var i in graphVertices){
-    document.write(graphVertices[i].getX() + ' ' + graphVertices[i].getY());
-}
-// document.write(someGraph.getVertices());
-// document.write(someGraph.getEdges());
-
