@@ -25,9 +25,10 @@
 <script src = ./jquery-2.2.3.js></script>
 <script src="RRT.js"></script>
 <script>
+
     var x , y;
     x = new Vertex(100,100,"X");
-    y = new Vertex(150,50,"Y");
+    y = new Vertex(150,150,"Y");
     z= steer(x,y);
     console.log(z);
     $('#theSVG').html($('#theSVG').html()+'<circle id="x" r="4" stroke="black"  fill="red"></circle>');
