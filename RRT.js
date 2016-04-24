@@ -165,27 +165,51 @@ function Near(aGraph, aVertex, aRadius){
 }
 
 function Nearest(aGraph, aPoint){
-
     var allVertices = aGraph.getVertices();
     var nearestVertex = null;
-    var minDist = Math.POSITIVE_INFINITY;
-    for (var i = 0; i < allVertices; i++) {
+    var minDist = Infinity;
+
+    for (var i = 0; i < allVertices.length; i++) {
+
         var eachVertex = allVertices[i];
 
         // Apply distance formula
-        var dist = Math.sqrt(Math.pow((eachVertex.getX() - aPoint[0]), 2) + Math.pow((eachVertex.getY() - aPoint[1]), 2));
+        var dist = Math.sqrt(Math.pow((eachVertex.getX() - aPoint.getX()), 2) + Math.pow((eachVertex.getY() - aPoint.getY()), 2));
 
         if (dist < minDist){
             minDist = dist;
             nearestVertex = allVertices[i];
         }
     }
-
     return nearestVertex;
 }
 
-function Steer(pointX, pointY, parameterEta){
+function Steer(){
     
+}
+
+function rrt(obstacles, testP, destP, nMilestone, mNeighbor,
+    xleft, xright, ybottom, ytop){
+    var vertices = [];
+    var edges = [];
+    var rrtGraph = new Graph(vertices, edges);
+
+    var xRange = xright - xleft;
+    var yRange = ytop - ybottom;
+
+    var testVertex = new Vertex(testP[0], testP[1], String(testP[0]) + String(testP[1]));
+    vertices.push(testVertex);
+
+    for (var i = 0; i < nMilestone; i++) {
+
+        var randVertex = SampleFree(xRange, yRange, obstacles);
+        var nearestVertex = Nearest(rrtGraph, randVertex);
+        var steerVertex = Steer();
+
+        if (link(obstacles, nearestVertex, steerVert)){
+            vertices.push(steerVertex);
+        }
+    }
 }
 
 /*
