@@ -368,3 +368,18 @@ function clear(obstacles, testP){
 
     return true;
 }
+
+function steer(base, goal) {
+    // inputs base and goal are vertices as defined by Vertex object
+    var eta = 20; // change this if necessary !!!!
+    var dist = Math.sqrt(Math.pow(goal.xcor-base.xcor, 2) + Math.pow((goal.ycor-base.ycor), 2));
+    if(dist<=eta)
+        return {xcor: goal.xcor, ycor:goal.ycor};
+    else {
+        var angle = Math.atan2(goal.ycor - base.ycor, goal.xcor - base.xcor);
+        console.log(angle);
+        var x = base.xcor+ eta * Math.cos(angle);
+        var y = base.ycor + eta * Math.sin(angle);
+        return {xcor:x,ycor:y};
+    }
+}

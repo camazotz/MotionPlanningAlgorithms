@@ -7,10 +7,14 @@
 
 <body style="font-family:sans-serif; font-size:15px; width:600px; margin-left:auto; margin-right:auto; background-color:#e0e0e0;">
 
-<!--<div style="width:500px; margin-left:auto; margin-right:auto;">-->
-<!--&lt;!&ndash; <img src="NewtonDrawing.jpg" width="500" height="500"> &ndash;&gt;-->
 
-<!--<canvas id="theCanvas" width="500" height="500">-->
+
+<div style="width:500px; margin-left:auto; margin-right:auto;"> 
+ <!--<img src="NewtonDrawing.jpg" width="500" height="500">-->
+
+<svg id="theSVG" width="500" height="500">
+</svg>
+
 
 
 <!--</canvas>-->
@@ -18,24 +22,23 @@
 <!--</div>-->
 
 
-<script src="PRMStar.js"></script>
+<script src = ./jquery-2.2.3.js></script>
+<script src="RRT.js"></script>
 <script>
-    var circX = graphVertices[0].getX();
-    var circY = graphVertices[0].getY();
-    //document.write('circX' + circX)
-
-    var canvas = document.getElementById("theCanvas");
-    var ctx = canvas.getContext("2d");
-
-//    for (var i in graphVertices) {
-//        document.write('circX' + graphVertices[i].getX())
-//        document.write('circY' + graphVertices[i].getY())
-//    }
-//    for (var i in graphVertices) {
-//        ctx.arc(graphVertices[i].getX(),graphVertices[i].getY(),1,0,2*Math.PI);
-//        ctx.stroke();
-//    }
-
+    var x , y;
+    x = new Vertex(100,100,"X");
+    y = new Vertex(150,50,"Y");
+    z= steer(x,y);
+    console.log(z);
+    $('#theSVG').html($('#theSVG').html()+'<circle id="x" r="4" stroke="black"  fill="red"></circle>');
+    $('#theSVG').html($('#theSVG').html()+'<circle id="y" r="4" stroke="black"  fill="blue"></circle>');
+    $('#theSVG').html($('#theSVG').html()+'<circle id="z" r="4" stroke="black"  fill="green"></circle>');
+    $('#x').attr("cx",x.xcor);
+    $('#x').attr("cy",x.ycor);
+    $('#y').attr("cx",y.xcor);
+    $('#y').attr("cy",y.ycor);
+    $('#z').attr("cx",z.xcor);
+    $('#z').attr("cy",z.ycor);
 
 </script>
 
