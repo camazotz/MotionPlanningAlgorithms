@@ -166,7 +166,7 @@ function Near(aGraph, aVertex, aRadius){
 
 function prm (obstacles, testP, destP, nMilestone, mNeighbor,
               xleft, xright, ybottom, ytop) {
-
+    document.write('inprm');
     var vertices = [];
     var edges = [];
     var prmStarGraph = new Graph(vertices, edges);
@@ -232,7 +232,7 @@ function prm (obstacles, testP, destP, nMilestone, mNeighbor,
                 }
 
                 if (destToSExists == false && dist != 0) {
-                    edges.push(new Edge(eachVertex, theNearVertex, dist, theNearVertex.getId() + eachVertex.getId()));
+                    edges.push(new Edge(theNearVertex, eachVertex, dist, theNearVertex.getId() + eachVertex.getId()));
                 }
             }
         }

@@ -19,26 +19,38 @@
 
 <!--</canvas>-->
 
-<!--</div>-->
+</div>
 
 
 <script src = ./jquery-2.2.3.js></script>
-<script src="RRT.js"></script>
+<script src="PRMStar.js"></script>
+<!--<script src="RRT.js"></script>-->
 <script>
-    var x , y;
-    x = new Vertex(100,100,"X");
-    y = new Vertex(150,50,"Y");
-    z= steer(x,y);
-    console.log(z);
-    $('#theSVG').html($('#theSVG').html()+'<circle id="x" r="4" stroke="black"  fill="red"></circle>');
-    $('#theSVG').html($('#theSVG').html()+'<circle id="y" r="4" stroke="black"  fill="blue"></circle>');
-    $('#theSVG').html($('#theSVG').html()+'<circle id="z" r="4" stroke="black"  fill="green"></circle>');
-    $('#x').attr("cx",x.xcor);
-    $('#x').attr("cy",x.ycor);
-    $('#y').attr("cx",y.xcor);
-    $('#y').attr("cy",y.ycor);
-    $('#z').attr("cx",z.xcor);
-    $('#z').attr("cy",z.ycor);
+//    var x , y, z;
+//    x = new Vertex(100,100,"X");
+//    y = new Vertex(150,50,"Y");
+//    z= steer(x,y);
+
+    var vertices = someGraph.getVertices();
+    var aVert = Parent(someGraph, vertices[2]);
+    document.write('child:' + vertices[2].getId());
+    document.write('parent:' + aVert.getId());
+//    for (var i in vertices){
+//        $('#theSVG').html($('#theSVG').html()+'<circle id="vertices[i].getId()" r="4" stroke="black"  fill="red"></circle>');
+//        $('#x').attr("cx",vertices[i].xcor+100);
+//        $('#x').attr("cy",vertices[i].ycor+100);
+//
+//    }
+//    console.log(z);
+//    $('#theSVG').html($('#theSVG').html()+'<circle id="x" r="4" stroke="black"  fill="red"></circle>');
+//    $('#theSVG').html($('#theSVG').html()+'<circle id="y" r="4" stroke="black"  fill="blue"></circle>');
+//    $('#theSVG').html($('#theSVG').html()+'<circle id="z" r="4" stroke="black"  fill="green"></circle>');
+//    $('#x').attr("cx",x.xcor);
+//    $('#x').attr("cy",x.ycor);
+//    $('#y').attr("cx",y.xcor);
+//    $('#y').attr("cy",y.ycor);
+//    $('#z').attr("cx",z.xcor);
+//    $('#z').attr("cy",z.ycor);
 
 </script>
 

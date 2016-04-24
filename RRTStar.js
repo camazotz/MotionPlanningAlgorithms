@@ -1,5 +1,5 @@
 /**
- * Created by nav on 4/18/16.
+ * Created by nav on 4/24/16.
  */
 
 /*
@@ -122,20 +122,14 @@ Graph.prototype = {
     }
 };
 
-/*
- Random int generator function adapted from Mozilla Developer Network page:
- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
- */
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 
 function SampleFree(xRange, yRange, obstacles){
     var xcor, ycor;
+
     do {
-        var someNum = getRandomInt(0, 22);
         xcor = getRandomInt(0, xRange);
         ycor = getRandomInt(0, yRange);
+
         var newCoords = [];
         newCoords.push(xcor);
         newCoords.push(ycor);
@@ -167,82 +161,12 @@ function Near(aGraph, aVertex, aRadius){
     return vertInRadius;
 }
 
-function Nearest(aGraph, aPoint){
-    var allVertices = aGraph.getVertices();
-    var nearestVertex = null;
-    var minDist = Infinity;
-
-    for (var i = 0; i < allVertices.length; i++) {
-
-        var eachVertex = allVertices[i];
-
-        // Apply distance formula
-        var dist = Math.sqrt(Math.pow((eachVertex.getX() - aPoint.getX()), 2) + Math.pow((eachVertex.getY() - aPoint.getY()), 2));
-
-        if (dist < minDist){
-            minDist = dist;
-            nearestVertex = allVertices[i];
-        }
-    }
-    return nearestVertex;
-}
-
 /*
- RRT
+ Random int generator function adapted from Mozilla Developer Network page:
+ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
  */
-
-function rrt(obstacles, testP, destP, nMilestone,
-    xleft, xright, ybottom, ytop){
-    document.write('inrrt');
-    var vertices = [];
-    var edges = [];
-    var rrtGraph = new Graph(vertices, edges);
-
-    var xRange = xright - xleft;
-    var yRange = ytop - ybottom;
-
-    var testVertex = new Vertex(testP[0], testP[1], String(testP[0]) + String(testP[1]));
-    vertices.push(testVertex);
-    for (var i = 0; i < nMilestone; i++) {
-
-        var randVertex = SampleFree(xRange, yRange, obstacles);
-        var nearestVertex = Nearest(rrtGraph, randVertex);
-        var steerObject = steer(nearestVertex, randVertex);
-        var steerVertex = new Vertex(steerObject.xcor, steerObject.ycor, steerObject.xcor.toString() + steerObject.ycor.toString());
-        // Distance formula
-        var dist = Math.sqrt(Math.pow((steerVertex.getX() - nearestVertex.getX()), 2)
-            + Math.pow((steerVertex.getY() - nearestVertex.getY()), 2));
-
-        if (link(obstacles, steerVertex, nearestVertex)){
-            vertices.push(steerVertex);
-
-            var sToDestId = steerVertex.getId() + nearestVertex.getId();
-            var destToSId = nearestVertex.getId() + steerVertex.getId();
-
-            var sToDestExists = false;
-            var destToSExists = false;
-            for (var k = 0; k < edges.length; k++){
-                //document.write(String(edges[k].getId() === sToDestId) + '\n');
-                if (edges[k].getId() === sToDestId){
-                    sToDestExists = true;
-                }
-
-                if (edges[k].getId() === destToSId){
-                    destToSExists = true;
-                }
-            }
-
-            // if (sToDestExists == false && dist != 0) {
-            //     edges.push(new Edge(steerVertex, nearestVertex, dist, steerVertex.getId() + nearestVertex.getId()));
-            // }
-
-            if (destToSExists == false && dist != 0) {
-                edges.push(new Edge(nearestVertex, steerVertex, dist, nearestVertex.getId() + steerVertex.getId()));
-            }
-        }
-    }
-
-    return rrtGraph;
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 /*
@@ -376,42 +300,44 @@ function clear(obstacles, testP){
     return true;
 }
 
-function steer(base, goal) {
-    // inputs base and goal are vertices as defined by Vertex object
-    var eta = 20; // change this if necessary !!!!
-    var dist = Math.sqrt(Math.pow(goal.xcor-base.xcor, 2) + Math.pow((goal.ycor-base.ycor), 2));
-    if(dist<=eta)
-        return {xcor: goal.xcor, ycor:goal.ycor};
-    else {
-        var angle = Math.atan2(goal.ycor - base.ycor, goal.xcor - base.xcor);
-        console.log(angle);
-        var x = base.xcor+ eta * Math.cos(angle);
-        var y = base.ycor + eta * Math.sin(angle);
-        return {xcor:x,ycor:y};
+function Parent(aGraph, aVertex){
+    var graphEdges = aGraph.getEdges();
+
+    for (var i in graphEdges){
+        if (graphEdges[i].getDestination().getId() == aVertex.getId()){
+            return graphEdges[i].getSource();
+        }
     }
 }
 
+function rrtStar(obstacles, testP, destP, nMilestone,
+                 xleft, xright, ybottom, ytop){
+    var vertices = [];
+    var edges = [];
+    var rrtStarGraph = new Graph(vertices, edges);
 
+    var xRange = xright - xleft;
+    var yRange = ytop - ybottom;
 
-var obs = [];
-obs.push(2);
-obs.push(5);
-obs.push(1);
+    var testVertex = new Vertex(testP[0], testP[1], String(testP[0]) + String(testP[1]));
+    vertices.push(testVertex);
+    for (var i = 0; i < nMilestone; i++) {
 
-var test = [];
-test.push(2);
-test.push(2);
+        var randVertex = SampleFree(xRange, yRange, obstacles);
+        var nearestVertex = Nearest(rrtStarGraph, randVertex);
+        var steerObject = steer(nearestVertex, randVertex);
+        var steerVertex = new Vertex(steerObject.xcor, steerObject.ycor, steerObject.xcor.toString() + steerObject.ycor.toString());
+        // Distance formula
+        var dist = Math.sqrt(Math.pow((steerVertex.getX() - nearestVertex.getX()), 2)
+            + Math.pow((steerVertex.getY() - nearestVertex.getY()), 2));
 
-var dest = [];
-dest.push(2);
-dest.push(8);
+        if (link(obstacles, steerVertex, nearestVertex)) {
 
+            var connRadius = 20;    // placeholder
+            var nearVertices = Near(rrtStarGraph, steerVertex, connRadius);
+            vertices.push(steerVertex);
+            var xMin = nearestVertex;
 
-var theRRTGraph = rrt(obs, test, dest, 3, 0, 22, 0, 22);
-
-var graphVertices = theRRTGraph.getVertices();
-
-var graphEdges = theRRTGraph.getEdges();
-for (var i in graphVertices){
-    document.write(' ' + graphVertices[i].getX() + ' ' + graphVertices[i].getY() + ' ');
+        }
+    }
 }
