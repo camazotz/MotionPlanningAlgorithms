@@ -206,8 +206,34 @@ function rrt(obstacles, testP, destP, nMilestone, mNeighbor,
         var nearestVertex = Nearest(rrtGraph, randVertex);
         var steerVertex = Steer();
 
-        if (link(obstacles, nearestVertex, steerVert)){
-            vertices.push(steerVertex);
+        // Distance formula
+        var dist = Math.sqrt(Math.pow((steerVertex.getX() - nearestVertex.getX()), 2)
+            + Math.pow((steerVertex.getY() - nearestVertex.getY()), 2));
+
+        if (link(obstacles, steerVertex, nearestVertex)){
+            var sToDestId = steerVertex.getId() + nearestVertex.getId();
+            var destToSId = nearestVertex.getId() + steerVertex.getId();
+
+            var sToDestExists = false;
+            var destToSExists = false;
+            for (var k = 0; k < edges.length; k++){
+                //document.write(String(edges[k].getId() === sToDestId) + '\n');
+                if (edges[k].getId() === sToDestId){
+                    sToDestExists = true;
+                }
+
+                if (edges[k].getId() === destToSId){
+                    destToSExists = true;
+                }
+            }
+
+            if (sToDestExists == false && dist != 0) {
+                edges.push(new Edge(steerVertex, nearestVertex, dist, steerVertex.getId() + nearestVertex.getId()));
+            }
+
+            if (destToSExists == false && dist != 0) {
+                edges.push(new Edge(steerVertex, nearestVertex, dist, nearestVertex.getId() + steerVertex.getId()));
+            }
         }
     }
 }
