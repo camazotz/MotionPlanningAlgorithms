@@ -196,7 +196,7 @@ function prm (obstacles, testP, destP, nMilestone, mNeighbor,
     var unitCircleVolume = Math.PI;
     var connRadius = (2 * Math.pow((1+(1/dim)), (1/dim))) * Math.pow((lebesgueVolume/unitCircleVolume),(1/dim));
 
-    document.write('connRadius: ' + connRadius);
+    //document.write('connRadius: ' + connRadius);
 
     for (var i = 0; i < vertices.length; i++){
         var eachVertex = vertices[i];
@@ -387,7 +387,7 @@ function clear(obstacles, testP){
 
 var obs = [];
 obs.push(2);
-obs.push(18);
+obs.push(5);
 obs.push(1);
 
 var test = [];
@@ -404,10 +404,12 @@ dest.push(8);
 //document.write(link(obs, test, dest));
 
 var someGraph = prm(obs, test, dest, 3, 2, 0, 22, 0, 22);
+
 var graphVertices = someGraph.getVertices();
+
 var graphEdges = someGraph.getEdges();
 for (var i in graphVertices){
-    document.write(graphVertices[i].getX() + ' ' + graphVertices[i].getY());
+    document.write(' ' + graphVertices[i].getX() + ' ' + graphVertices[i].getY() + ' ');
 }
 // document.write(someGraph.getVertices());
 // document.write(someGraph.getEdges());

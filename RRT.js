@@ -165,27 +165,77 @@ function Near(aGraph, aVertex, aRadius){
 }
 
 function Nearest(aGraph, aPoint){
-
     var allVertices = aGraph.getVertices();
     var nearestVertex = null;
-    var minDist = Math.POSITIVE_INFINITY;
-    for (var i = 0; i < allVertices; i++) {
+    var minDist = Infinity;
+
+    for (var i = 0; i < allVertices.length; i++) {
+
         var eachVertex = allVertices[i];
 
         // Apply distance formula
-        var dist = Math.sqrt(Math.pow((eachVertex.getX() - aPoint[0]), 2) + Math.pow((eachVertex.getY() - aPoint[1]), 2));
+        var dist = Math.sqrt(Math.pow((eachVertex.getX() - aPoint.getX()), 2) + Math.pow((eachVertex.getY() - aPoint.getY()), 2));
 
         if (dist < minDist){
             minDist = dist;
             nearestVertex = allVertices[i];
         }
     }
-
     return nearestVertex;
 }
 
-function Steer(pointX, pointY, parameterEta){
+function Steer(){
     
+}
+
+function rrt(obstacles, testP, destP, nMilestone, mNeighbor,
+    xleft, xright, ybottom, ytop){
+    var vertices = [];
+    var edges = [];
+    var rrtGraph = new Graph(vertices, edges);
+
+    var xRange = xright - xleft;
+    var yRange = ytop - ybottom;
+
+    var testVertex = new Vertex(testP[0], testP[1], String(testP[0]) + String(testP[1]));
+    vertices.push(testVertex);
+
+    for (var i = 0; i < nMilestone; i++) {
+
+        var randVertex = SampleFree(xRange, yRange, obstacles);
+        var nearestVertex = Nearest(rrtGraph, randVertex);
+        var steerVertex = Steer();
+
+        // Distance formula
+        var dist = Math.sqrt(Math.pow((steerVertex.getX() - nearestVertex.getX()), 2)
+            + Math.pow((steerVertex.getY() - nearestVertex.getY()), 2));
+
+        if (link(obstacles, steerVertex, nearestVertex)){
+            var sToDestId = steerVertex.getId() + nearestVertex.getId();
+            var destToSId = nearestVertex.getId() + steerVertex.getId();
+
+            var sToDestExists = false;
+            var destToSExists = false;
+            for (var k = 0; k < edges.length; k++){
+                //document.write(String(edges[k].getId() === sToDestId) + '\n');
+                if (edges[k].getId() === sToDestId){
+                    sToDestExists = true;
+                }
+
+                if (edges[k].getId() === destToSId){
+                    destToSExists = true;
+                }
+            }
+
+            if (sToDestExists == false && dist != 0) {
+                edges.push(new Edge(steerVertex, nearestVertex, dist, steerVertex.getId() + nearestVertex.getId()));
+            }
+
+            if (destToSExists == false && dist != 0) {
+                edges.push(new Edge(steerVertex, nearestVertex, dist, nearestVertex.getId() + steerVertex.getId()));
+            }
+        }
+    }
 }
 
 /*
