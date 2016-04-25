@@ -224,8 +224,8 @@ function steer(base, goal) {
         return new Vertex(goal.xcor,goal.ycor,goal.xcor.toString()+goal.ycor.toString()); //{xcor: goal.xcor, ycor:goal.ycor};
     else {
         var angle = Math.atan2(goal.ycor - base.ycor, goal.xcor - base.xcor);
-        var x = base.xcor+ eta * Math.cos(angle);
-        var y = base.ycor + eta * Math.sin(angle);
+        var x = Math.round(base.xcor+ eta * Math.cos(angle));
+        var y = Math.round(base.ycor + eta * Math.sin(angle));
         return  new Vertex(x,y,x.toString()+y.toString());//{xcor:x,ycor:y};
     }
 }

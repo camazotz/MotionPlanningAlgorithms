@@ -24,7 +24,7 @@
 
 <script src = ./jquery-2.2.3.js></script>
 <script src=./helperFunctions.js></script>
-<!--<script src="PRMStar.js"></script>-->
+<script src="PRMStar.js"></script>
 <script src="K-RRG.js"></script>
 <script>
 
@@ -43,7 +43,7 @@ var obstacles= [];
             circumX = e.offsetX;
             circumY = e.offsetY;
         } else if (drawingState == "drawing") {
-            var radius = Math.sqrt(Math.pow(circumX-e.offsetX, 2) + Math.pow(circumY-e.offsetY, 2));
+            var radius = Math.round(Math.sqrt(Math.pow(circumX-e.offsetX, 2) + Math.pow(circumY-e.offsetY, 2)));
             $('#theSVG').html('<circle id="circle-'+currentObstacle+'" r="4" stroke="black"  fill="red"></circle>'+$('#theSVG').html());
             $('#circle-'+currentObstacle).attr("cx",e.offsetX);
             $('#circle-'+currentObstacle).attr("cy",e.offsetY);
@@ -56,6 +56,7 @@ var obstacles= [];
         }
     });
         $("#theSVG").mousemove(function (e) {
+//            console.log(e.offsetX+ " "+e.offsetY);
             $('#dashedLine-'+currentObstacle).attr("x2",e.offsetX);
             $('#dashedLine-'+currentObstacle).attr("y2",e.offsetY);
             $('#dashedLine-'+currentObstacle).show();
@@ -63,8 +64,25 @@ var obstacles= [];
 
     });
 function run() {
-
-    var result = k_RRG(obstacles,50,new Vertex(300,300,"300300"),0,600,0,600);
+//    var x1 = 124;
+//    var y1 = 404;
+//    var x2 = 77;
+//    var y2 = 421;
+//    var idx = 3;
+//    var cx = 98;
+//    var cy = 367;
+//    var r = 52;
+//    $('#theSVG').html($('#theSVG').html()+'<circle id="vertex-'+idx+'" cx="'+cx+'"  cy="'+cy+'" r="'+r+'" stroke="black"  fill="blue"></circle>');
+//    $('#theSVG').html($('#theSVG').html()+'<line  x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2+' id="edge-'+idx+'"  stroke="black"  fill="red"></line>');
+//
+////    while(!link([cx,cy,r],new Vertex(x1,y1,"540"),new Vertex(x2,y2,"16040"))){
+////        console.log('something');
+////        y1++;
+////        $('#edge-3').attr('y1',y1);
+////    }
+//    console.log('linkTest: ' +link([cx,cy,r],new Vertex(x1,y1,"540"),new Vertex(x2,y2,"16040")));
+//    return;
+    var result = k_RRG(obstacles,200,new Vertex(300,300,"300300"),0,600,0,600);
 
     var start = [];
     start.push(50);
@@ -76,7 +94,7 @@ function run() {
     var vertices = result.getVertices();
     var edges = result.getEdges();
     vertices.forEach(function(vertex, idx, array) {
-//        console.log(vertex.getX()+" "+vertex.getY());
+
         $('#theSVG').html($('#theSVG').html()+'<circle id="vertex-'+idx+'" cx="'+vertex.getX()+'"  cy="'+vertex.getY()+'" r="4" stroke="black"  fill="blue"></circle>');
 
     });
@@ -87,7 +105,8 @@ function run() {
         var y2 = edge.getDestination().getY();
         $('#theSVG').html($('#theSVG').html()+'<line  x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2+' id="edge-'+idx+'"  stroke="black"  fill="red"></line>');
     });
-
+    console.log(randomNums);
+    $('body').append(randomNums.toString());
 }
 </script>
 
