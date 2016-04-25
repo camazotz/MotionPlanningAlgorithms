@@ -133,10 +133,9 @@ function SampleFree(xRange, yRange, obstacles){
         xcor = getRandomInt(0, xRange);
         ycor = getRandomInt(0, yRange);
 
-        var newCoords = [];
-        newCoords.push(xcor);
-        newCoords.push(ycor);
-    } while (clear(obstacles, newCoords) != true);
+        var tmpVert = new Vertex(xcor, ycor, String(xcor) + String(ycor));
+
+    } while (clear(obstacles, tmpVert) != true);
 
     var newVert = new Vertex(xcor, ycor, String(xcor) + String(ycor));
     return newVert;
@@ -195,7 +194,8 @@ function prm (obstacles, testP, destP, nMilestone, mNeighbor,
     var lebesgueVolume = xRange * yRange;
     var unitCircleVolume = Math.PI;
     //var connRadius = (2 * Math.pow((1+(1/dim)), (1/dim))) * Math.pow((lebesgueVolume/unitCircleVolume),(1/dim));
-var connRadius = 90;
+
+    var connRadius = 90;
     //document.write('connRadius: ' + connRadius);
 
     for (var i = 0; i < vertices.length; i++){
@@ -266,6 +266,7 @@ function link(obstacles, end1, end2){
         var obstacle_r = obstacles[i+2];
         var centerToLine = Math.abs((end2.ycor-end1.ycor)*obstacle_x-(end2.xcor-end1.xcor)*obstacle_y+end2.xcor*end1.ycor-end2.ycor*end1.xcor)/Math.hypot(end2.ycor-end1.ycor,end2.xcor-end1.xcor);
         if(centerToLine<=obstacle_r)
+
             return false;
     }
 
@@ -273,7 +274,7 @@ function link(obstacles, end1, end2){
     return true;
 }
 
-function clear(obstacles, testP){
+function clear(obstacles, testVertex){
 
     // Determine number of obstacles
     var numObstacles = obstacles.length / 3;
@@ -282,8 +283,8 @@ function clear(obstacles, testP){
     var nextIndex = 0;	// Index of obstacle list
 
     // Get the starting point coordinates
-    var testX = testP[0];
-    var testY = testP[1];
+    var testX = testVertex.getX();
+    var testY = testVertex.getY();
 
     // Loop through all obstacles
     for (var i = 0; i < numObstacles; i++){
