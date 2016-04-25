@@ -23,9 +23,13 @@
 
 
 <script src = ./jquery-2.2.3.js></script>
+<script src=./helperFunctions.js></script>
 <!--<script src="PRMStar.js"></script>-->
 <script src="K-RRG.js"></script>
 <script>
+
+
+
 var obstacles= [];
     $(function () {
     var drawingState = "none";
@@ -60,16 +64,15 @@ var obstacles= [];
     });
 function run() {
 
-    console.log(obstacles);
-    console.log(obstacles.length);
     var result = k_RRG(obstacles,50,new Vertex(300,300,"300300"),0,600,0,600);
+
     var start = [];
     start.push(50);
     start.push(50);
     var dest = [];
 //    var result = prm(obstacles, start,dest,50,10,0,600,0,600);
 
-    console.log(result);
+
     var vertices = result.getVertices();
     var edges = result.getEdges();
     vertices.forEach(function(vertex, idx, array) {
