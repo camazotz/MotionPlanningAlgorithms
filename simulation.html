@@ -61,7 +61,14 @@ var obstacles= [];
 function run() {
   //  console.log(obstacles);
 //    var result = k_RRG(obstacles,50,new Vertex(300,300,"300300"),0,600,0,600);
-    var result = prm(obstacles, new Vertex(50,50,"5050"),new Vertex(100,100,"100100"),50,10,0,600,0,600);
+    var start = []
+    start.push(2);
+    start.push(2);
+    var dest = [];
+    dest.push(2);
+    dest.push(8);
+
+    var result = prm(obstacles, start,dest,50,10,0,600,0,600);
     console.log(result);
     var vertices = result.getVertices();
     var edges = result.getEdges();

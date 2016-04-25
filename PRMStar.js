@@ -133,10 +133,9 @@ function SampleFree(xRange, yRange, obstacles){
         xcor = getRandomInt(0, xRange);
         ycor = getRandomInt(0, yRange);
 
-        var newCoords = [];
-        newCoords.push(xcor);
-        newCoords.push(ycor);
-    } while (clear(obstacles, newCoords) != true);
+        var tmpVert = new Vertex(xcor, ycor, String(xcor) + String(ycor));
+
+    } while (clear(obstacles, tmpVert) != true);
 
     var newVert = new Vertex(xcor, ycor, String(xcor) + String(ycor));
     return newVert;
@@ -195,7 +194,7 @@ function prm (obstacles, testP, destP, nMilestone, mNeighbor,
     var lebesgueVolume = xRange * yRange;
     var unitCircleVolume = Math.PI;
     //var connRadius = (2 * Math.pow((1+(1/dim)), (1/dim))) * Math.pow((lebesgueVolume/unitCircleVolume),(1/dim));
-var connRadius = 10;
+    var connRadius = 90;
     //document.write('connRadius: ' + connRadius);
 
     for (var i = 0; i < vertices.length; i++){
@@ -258,17 +257,17 @@ function getRandomInt(min, max) {
     Link and Clear
  */
 
-function link(obstacles, testP, destP){
+function link(obstacles, testVertex, destVertex){
 
     // Check if start point is in collision
-    if (clear(obstacles, testP) == false){
+    if (clear(obstacles, testVertex) == false){
         return false;
     }
 
-    var testX = testP[0];
-    var testY = testP[1];
-    var destX = destP[0];
-    var destY = destP[1];
+    var testX = testVertex.getX();
+    var testY = testVertex.getX();
+    var destX = destVertex.getX();
+    var destY = destVertex.getY();
     var yincr = 0, xincr = 0;
 
     if (destY != testY && destX != testX){
@@ -343,10 +342,9 @@ function link(obstacles, testP, destP){
         //document.write('newX: ', newX, ' newY: ', newY, 'i: ', i);
 
         // Check for collision of new point with obstacle
-        var newPoint = [];
-        newPoint.push(newX);
-        newPoint.push(newY);
-        if (clear(obstacles, newPoint) == false){
+        var tmpVertex = new Vertex(newX, newY, String(newX) + String(newY));
+
+        if (clear(obstacles, tmpVertex) == false){
             return false;
         }
 
@@ -355,7 +353,7 @@ function link(obstacles, testP, destP){
     return true;
 }
 
-function clear(obstacles, testP){
+function clear(obstacles, testVertex){
 
     // Determine number of obstacles
     var numObstacles = obstacles.length / 3;
@@ -364,8 +362,8 @@ function clear(obstacles, testP){
     var nextIndex = 0;	// Index of obstacle list
 
     // Get the starting point coordinates
-    var testX = testP[0];
-    var testY = testP[1];
+    var testX = testVertex.getX();
+    var testY = testVertex.getY();
 
     // Loop through all obstacles
     for (var i = 0; i < numObstacles; i++){
