@@ -26,6 +26,7 @@
 <script src=./helperFunctions.js></script>
 <script src="PRMStar.js"></script>
 <script src="K-RRG.js"></script>
+<script src="RRT.js"></script>
 <script>
 
 
@@ -64,6 +65,7 @@ var obstacles= [];
 
     });
 function run() {
+
 //    var x1 = 124;
 //    var y1 = 404;
 //    var x2 = 77;
@@ -84,12 +86,13 @@ function run() {
 //    return;
     var result = k_RRG(obstacles,200,new Vertex(300,300,"300300"),0,600,0,600);
 
+
     var start = [];
     start.push(50);
     start.push(50);
     var dest = [];
-//    var result = prm(obstacles, start,dest,50,10,0,600,0,600);
-
+    //var result = prm(obstacles, start,dest,50,10,0,600,0,600);
+    //var result = rrt(obstacles, start,dest,50,0,600,0,600);
 
     var vertices = result.getVertices();
     var edges = result.getEdges();

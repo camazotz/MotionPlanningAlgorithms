@@ -33,8 +33,7 @@ function rrtStar(obstacles, testP, destP, nMilestone,
 
         var randVertex = SampleFree(xRange, yRange, obstacles);
         var nearestVertex = Nearest(rrtStarGraph, randVertex);
-        var steerObject = steer(nearestVertex, randVertex);
-        var steerVertex = new Vertex(steerObject.xcor, steerObject.ycor, steerObject.xcor.toString() + steerObject.ycor.toString());
+        var steerVertex = steer(nearestVertex, randVertex);
 
         // Distance formula
         var dist = Math.sqrt(Math.pow((steerVertex.getX() - nearestVertex.getX()), 2)

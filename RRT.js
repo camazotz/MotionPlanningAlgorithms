@@ -5,22 +5,21 @@
 
 function rrt(obstacles, testP, destP, nMilestone,
     xleft, xright, ybottom, ytop){
-    document.write('inrrt');
     var vertices = [];
     var edges = [];
     var rrtGraph = new Graph(vertices, edges);
 
     var xRange = xright - xleft;
     var yRange = ytop - ybottom;
-
+console.log('xRange:' + xRange);
     var testVertex = new Vertex(testP[0], testP[1], String(testP[0]) + String(testP[1]));
     vertices.push(testVertex);
     for (var i = 0; i < nMilestone; i++) {
 
         var randVertex = SampleFree(xRange, yRange, obstacles);
         var nearestVertex = Nearest(rrtGraph, randVertex);
-        var steerObject = steer(nearestVertex, randVertex);
-        var steerVertex = new Vertex(steerObject.xcor, steerObject.ycor, steerObject.xcor.toString() + steerObject.ycor.toString());
+        var steerVertex = steer(nearestVertex, randVertex);
+        
         // Distance formula
         var dist = Math.sqrt(Math.pow((steerVertex.getX() - nearestVertex.getX()), 2)
             + Math.pow((steerVertex.getY() - nearestVertex.getY()), 2));

@@ -143,7 +143,7 @@ function Near(aGraph, aVertex, aRadius){
         var dist = Math.sqrt(Math.pow((eachVertex.getX() - aVertex.getX()), 2) + Math.pow((eachVertex.getY() - aVertex.getY()), 2));
 
         //document.write('after dist: ' + dist);
-        if (dist <= aRadius){
+        if (dist != 0 && dist <= aRadius){
             vertInRadius.push(allVertices[i]);
         }
     }
@@ -171,21 +171,119 @@ function Nearest(aGraph, aPoint){
     return nearestVertex;
 }
 
-function link(obstacles, end1, end2){
+// function link(obstacles, end1, end2){
+//
+//     for(var i=0;i<obstacles.length/3; i=i+3) {
+//         var obstacle_x = obstacles[i];
+//         var obstacle_y = obstacles[i+1];
+//         var obstacle_r = obstacles[i+2];
+//         var centerToLine = Math.abs((end2.ycor-end1.ycor)*obstacle_x-(end2.xcor-end1.xcor)*obstacle_y+end2.xcor*end1.ycor-end2.ycor*end1.xcor)/Math.hypot(end2.ycor-end1.ycor,end2.xcor-end1.xcor);
+//         if(centerToLine<=obstacle_r)
+//
+//             return false;
+//     }
+//
+//
+//     return true;
+// }
 
-    for(var i=0;i<obstacles.length/3; i=i+3) {
-        var obstacle_x = obstacles[i];
-        var obstacle_y = obstacles[i+1];
-        var obstacle_r = obstacles[i+2];
-        var centerToLine = Math.abs((end2.ycor-end1.ycor)*obstacle_x-(end2.xcor-end1.xcor)*obstacle_y+end2.xcor*end1.ycor-end2.ycor*end1.xcor)/Math.hypot(end2.ycor-end1.ycor,end2.xcor-end1.xcor);
-        if(centerToLine<=obstacle_r)
+function link(obstacles, testVertex, destVertex){
 
-            return false;
+    // Check if start point is in collision
+    if (clear(obstacles, testVertex) == false ||
+    clear(obstacles, destVertex) == false){
+        return false;
     }
 
+    var testX = testVertex.getX();
+    var testY = testVertex.getY();
+    var destX = destVertex.getX();
+    var destY = destVertex.getY();
+    var yincr = 0, xincr = 0;
+
+    if (destY != testY && destX != testX){
+        var slope = (destY - testY) / (destX - testX);
+        yincr = Math.sqrt((Math.pow(slope,2)) / (Math.pow(slope,2) + 1));
+        xincr = (1 / slope) * yincr;
+    }
+
+    // Apply distance formula
+    var dist = Math.sqrt(Math.pow((destX - testX), 2) + Math.pow((destY - testY), 2));
+
+    var numIter = Math.floor(dist);
+
+    var newX = testX, newY = testY;
+
+    //document.write(numIter);
+
+    /* Go in increments of 1 unit towards the destination point,
+     checking each subsequent point for collision with an
+     obstacle.*/
+    for (var i = 0; i < numIter; i++){
+        //document.write('i: ', i);
+
+        // Check if dest and start are the same. If so, break
+        if (destY == testY && destX == testX){
+            //document.write('in equals')
+            break;
+        }
+
+        // Check different configurations of the start and end
+        // points and increment accordingly
+        if (destY > testY && destX > testX){
+            newX = newX + xincr;
+            newY = newY + yincr;
+        }
+
+        else if (destY > testY && destX < testX){
+            newX = newX - xincr;
+            newY = newY + yincr;
+        }
+
+        else if (destY < testY && destX < testX){
+            newX = newX - xincr;
+            newY = newY - yincr;
+        }
+
+        else if (destY < testY && destX > testX){
+            newX = newX + xincr;
+            newY = newY - yincr;
+        }
+
+        else if (destY == testY && destX > testX){
+            newX = newX + 1;
+            newY = newY;
+        }
+
+        else if (destY == testY && destX < testX){
+            newX = newX - 1;
+            newY = newY;
+        }
+
+        else if (destX == testX && destY > testY){
+            newX = newX;
+            newY = newY + 1;
+        }
+
+        else if (destX == testX && destY < testY){
+            newX = newX;
+            newY = newY - 1;
+        }
+
+        //document.write('newX: ', newX, ' newY: ', newY, 'i: ', i);
+
+        // Check for collision of new point with obstacle
+        var tmpVertex = new Vertex(newX, newY, String(newX) + String(newY));
+
+        if (clear(obstacles, tmpVertex) == false){
+            return false;
+        }
+
+    }
 
     return true;
 }
+
 
 function clear(obstacles, testVertex){
 
@@ -226,6 +324,7 @@ function steer(base, goal) {
         var angle = Math.atan2(goal.ycor - base.ycor, goal.xcor - base.xcor);
         var x = Math.round(base.xcor+ eta * Math.cos(angle));
         var y = Math.round(base.ycor + eta * Math.sin(angle));
+
         return  new Vertex(x,y,x.toString()+y.toString());//{xcor:x,ycor:y};
     }
 }
