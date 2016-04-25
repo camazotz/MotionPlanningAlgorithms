@@ -327,6 +327,7 @@ function rrtStar(obstacles, testP, destP, nMilestone,
         var nearestVertex = Nearest(rrtStarGraph, randVertex);
         var steerObject = steer(nearestVertex, randVertex);
         var steerVertex = new Vertex(steerObject.xcor, steerObject.ycor, steerObject.xcor.toString() + steerObject.ycor.toString());
+
         // Distance formula
         var dist = Math.sqrt(Math.pow((steerVertex.getX() - nearestVertex.getX()), 2)
             + Math.pow((steerVertex.getY() - nearestVertex.getY()), 2));
@@ -338,6 +339,72 @@ function rrtStar(obstacles, testP, destP, nMilestone,
             vertices.push(steerVertex);
             var xMin = nearestVertex;
 
+            var cMin = Cost(nearestVertex) + dist;
+
+            for (var xNear in nearVertices){
+                if (link(nearestVertex, steerVertex) &&
+                    (Cost(xNear) + distanceCost(xNear, steerVertex) < cMin)) {
+                    xMin = xNear;
+                    cMin = Cost(xNear) + distanceCost(xNear, steerVertex);
+                }
+            }
+
+            // Add Edge
+
+            var sToDestId = xMin.getId() + steerVertex.getId();
+
+            var sToDestExists = false;
+            for (var k = 0; k < edges.length; k++){
+                //document.write(String(edges[k].getId() === sToDestId) + '\n');
+                if (edges[k].getId() === sToDestId){
+                    sToDestExists = true;
+                }
+            }
+
+            if (sToDestExists == false && dist != 0) {
+                edges.push(new Edge(xMin, steerVertex, dist, xMin.getId() + steerVertex.getId()));
+            }
+
+            // for loop
+
+            for (var xNear2 in nearVertices){
+                var xParent = ""
+                if (link(nearestVertex, steerVertex) &&
+                    (Cost(xNear2) + distanceCost(xNear2, steerVertex) < Cost(xNear2))) {
+                    xParent = Parent(xNear2);
+                }
+                
+                var edgeDist = distanceCost(steerVertex, xNear2);
+                
+                if (xParent == ""){
+                    edges.push(new Edge(steerVertex, xNear2, edgeDist, steerVertex.getId() + xNear2.getId()));
+                }
+
+                else{
+                    var parentNearId = xParent.getId() + xNear2.getId();
+                    for (var edgeInd = 0; edgeInd < edges.length; edgeInd++){
+                        if (edges[edgeInd].getId() == parentNearId){
+                            edges.splice(edgeInd, 1,
+                            new Edge(steerVertex, xNear2, edgeDist, steerVertex.getId() + xNear2.getId()));
+                        }
+                    }
+                }
+            }
+
         }
     }
+
+    return rrtStarGraph;
+}
+
+function distanceCost(vertexOne, vertexTwo){
+    // Distance formula
+    var dist = Math.sqrt(Math.pow((vertexOne.getX() - vertexTwo.getX()), 2)
+        + Math.pow((vertexOne.getY() - vertexTwo.getY()), 2));
+    return dist;
+
+}
+
+function Cost(aVertex){
+
 }
