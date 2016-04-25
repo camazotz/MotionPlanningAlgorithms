@@ -121,7 +121,13 @@ Graph.prototype = {
         return this.edges;
     }
 };
-
+/*
+ Random int generator function adapted from Mozilla Developer Network page:
+ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+ */
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 /*
  RRT
  */
@@ -204,7 +210,7 @@ function k_RRG(obstacles,nMilestone, x_init, xleft, xright, ybottom, ytop){
         var newVertex = steer(nearestVertex, randVertex);
         if(link(obstacles,nearestVertex,newVertex)) {
             var nearSet = Near(kRRG_graph,newVertex, 2*Math.E*(Math.log(vertices.length)/Math.log(2)));
-            vertices.append(newVertex);
+            vertices.push(newVertex);
             var dist = Math.sqrt(Math.pow((newVertex.getX() - nearestVertex.getX()), 2) + Math.pow((newVertex.getY() - nearestVertex.getY()), 2));
             edges.push(new Edge(nearestVertex, newVertex,dist,newVertex.getId() + nearestVertex.getId()));
             for(var j=0;i<nearSet.length;i++) {
@@ -354,15 +360,14 @@ function clear(obstacles, testP){
 
 function steer(base, goal) {
     // inputs base and goal are vertices as defined by Vertex object
-    var eta = 20; // change this if necessary !!!!
+    var eta = 50; // change this if necessary !!!!
     var dist = Math.sqrt(Math.pow(goal.xcor-base.xcor, 2) + Math.pow((goal.ycor-base.ycor), 2));
     if(dist<=eta)
-        return {xcor: goal.xcor, ycor:goal.ycor};
+        return new Vertex(goal.xcor,goal.ycor,goal.xcor.toString()+goal.ycor.toString()); //{xcor: goal.xcor, ycor:goal.ycor};
     else {
         var angle = Math.atan2(goal.ycor - base.ycor, goal.xcor - base.xcor);
-        console.log(angle);
         var x = base.xcor+ eta * Math.cos(angle);
         var y = base.ycor + eta * Math.sin(angle);
-        return {xcor:x,ycor:y};
+        return  new Vertex(x,y,x.toString()+y.toString());//{xcor:x,ycor:y};
     }
 }

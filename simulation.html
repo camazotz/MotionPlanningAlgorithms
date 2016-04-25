@@ -5,18 +5,18 @@
 <meta charset="utf-8"> <title>RRT</title>
 </head>
 
-<body style="font-family:sans-serif; font-size:15px; width:600px; margin-left:auto; margin-right:auto; background-color:#e0e0e0;">
+<body style="font-family:sans-serif; font-size:15px; width:600px; margin-left:auto; margin-right:auto; ">
 
 
 
-<div style="width:500px; margin-left:auto; margin-right:auto;"> 
+<div id="draw" style="width: 700px;height: 600px; display:inline-block">
  <!--<img src="NewtonDrawing.jpg" width="500" height="500">-->
 
-<svg id="theSVG" width="500" height="500">
+<svg id="theSVG" style="border:1px solid black; background-color:#e0e0e0;width: 600px;height: 600px;">
 </svg>
 
 
-
+<div style="vertical-align: top; display: inline-block"><button onclick="run()" style="height: 20px; width: 50px;">Run</button></div>
 <!--</canvas>-->
 
 </div>
@@ -24,27 +24,61 @@
 
 <script src = ./jquery-2.2.3.js></script>
 <script src="PRMStar.js"></script>
-<!--<script src="RRT.js"></script>-->
+<!--<script src="K-RRG.js"></script>-->
 <script>
+var obstacles= [];
+    $(function () {
+    var drawingState = "none";
+    var circumX, circumY;
+    var currentObstacle = 1;
+    $("#theSVG").click(function (e) {
+        if (drawingState == "none") {
+            $('#theSVG').html($('#theSVG').html()+'<line  x1='+e.offsetX+' y1='+e.offsetY+'  id="dashedLine-'+currentObstacle+'" stroke-dasharray="5" stroke="black"  fill="red"></line>');
+            $('#dashedLine-'+currentObstacle).hide();
+            drawingState = "drawing";
+            circumX = e.offsetX;
+            circumY = e.offsetY;
+        } else if (drawingState == "drawing") {
+            var radius = Math.sqrt(Math.pow(circumX-e.offsetX, 2) + Math.pow(circumY-e.offsetY, 2));
+            $('#theSVG').html('<circle id="circle-'+currentObstacle+'" r="4" stroke="black"  fill="red"></circle>'+$('#theSVG').html());
+            $('#circle-'+currentObstacle).attr("cx",e.offsetX);
+            $('#circle-'+currentObstacle).attr("cy",e.offsetY);
+            $('#circle-'+currentObstacle).attr("r",radius);
+            obstacles.push(e.offsetX);
+            obstacles.push(e.offsetY);
+            obstacles.push(radius);
+            currentObstacle++;
+            drawingState="none";
+        }
+    });
+        $("#theSVG").mousemove(function (e) {
+            $('#dashedLine-'+currentObstacle).attr("x2",e.offsetX);
+            $('#dashedLine-'+currentObstacle).attr("y2",e.offsetY);
+            $('#dashedLine-'+currentObstacle).show();
+        });
 
+    });
+function run() {
+  //  console.log(obstacles);
+//    var result = k_RRG(obstacles,50,new Vertex(300,300,"300300"),0,600,0,600);
+    var result = prm(obstacles, new Vertex(50,50,"5050"),new Vertex(100,100,"100100"),50,10,0,600,0,600);
+    console.log(result);
+    var vertices = result.getVertices();
+    var edges = result.getEdges();
+    vertices.forEach(function(vertex, idx, array) {
+//        console.log(vertex.getX()+" "+vertex.getY());
+        $('#theSVG').html($('#theSVG').html()+'<circle id="vertex-'+idx+'" cx="'+vertex.getX()+'"  cy="'+vertex.getY()+'" r="4" stroke="black"  fill="blue"></circle>');
 
+    });
+    edges.forEach(function(edge, idx, array) {
+        var x1 = edge.getSource().getX();
+        var y1 = edge.getSource().getY();
+        var x2 = edge.getDestination().getX();
+        var y2 = edge.getDestination().getY();
+        $('#theSVG').html($('#theSVG').html()+'<line  x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2+' id="edge-'+idx+'"  stroke="black"  fill="red"></line>');
+    });
 
-    var x , y;
-    x = new Vertex(100,100,"X");
-    y = new Vertex(150,150,"Y");
-    z= steer(x,y);
-    console.log(z);
-    $('#theSVG').html($('#theSVG').html()+'<circle id="x" r="4" stroke="black"  fill="red"></circle>');
-    $('#theSVG').html($('#theSVG').html()+'<circle id="y" r="4" stroke="black"  fill="blue"></circle>');
-    $('#theSVG').html($('#theSVG').html()+'<circle id="z" r="4" stroke="black"  fill="green"></circle>');
-    $('#x').attr("cx",x.xcor);
-    $('#x').attr("cy",x.ycor);
-    $('#y').attr("cx",y.xcor);
-    $('#y').attr("cy",y.ycor);
-    $('#z').attr("cx",z.xcor);
-    $('#z').attr("cy",z.ycor);
-
-
+}
 </script>
 
 

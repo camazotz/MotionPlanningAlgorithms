@@ -166,7 +166,7 @@ function Near(aGraph, aVertex, aRadius){
 
 function prm (obstacles, testP, destP, nMilestone, mNeighbor,
               xleft, xright, ybottom, ytop) {
-    document.write('inprm');
+    // document.write('inprm');
     var vertices = [];
     var edges = [];
     var prmStarGraph = new Graph(vertices, edges);
@@ -194,8 +194,8 @@ function prm (obstacles, testP, destP, nMilestone, mNeighbor,
     //var connRadius = Math.pow((Math.log(nMilestone) / nMilestone), (1/dim));
     var lebesgueVolume = xRange * yRange;
     var unitCircleVolume = Math.PI;
-    var connRadius = (2 * Math.pow((1+(1/dim)), (1/dim))) * Math.pow((lebesgueVolume/unitCircleVolume),(1/dim));
-
+    //var connRadius = (2 * Math.pow((1+(1/dim)), (1/dim))) * Math.pow((lebesgueVolume/unitCircleVolume),(1/dim));
+var connRadius = 10;
     //document.write('connRadius: ' + connRadius);
 
     for (var i = 0; i < vertices.length; i++){
@@ -385,32 +385,32 @@ function clear(obstacles, testP){
     return true;
 }
 
-var obs = [];
-obs.push(2);
-obs.push(5);
-obs.push(1);
-
-var test = [];
-test.push(2);
-test.push(2);
-
-var dest = [];
-dest.push(2);
-dest.push(8);
-//document.write(obs);
-
-//document.write(clear(obs, test));
-
-//document.write(link(obs, test, dest));
-
-var someGraph = prm(obs, test, dest, 3, 2, 0, 22, 0, 22);
-
-var graphVertices = someGraph.getVertices();
-
-var graphEdges = someGraph.getEdges();
-for (var i in graphVertices){
-    document.write(' ' + graphVertices[i].getX() + ' ' + graphVertices[i].getY() + ' ');
-}
-// document.write(someGraph.getVertices());
-// document.write(someGraph.getEdges());
-
+// var obs = [];
+// obs.push(2);
+// obs.push(5);
+// obs.push(1);
+//
+// var test = [];
+// test.push(2);
+// test.push(2);
+//
+// var dest = [];
+// dest.push(2);
+// dest.push(8);
+// //document.write(obs);
+//
+// //document.write(clear(obs, test));
+//
+// //document.write(link(obs, test, dest));
+//
+// var someGraph = prm(obs, test, dest, 3, 2, 0, 22, 0, 22);
+//
+// var graphVertices = someGraph.getVertices();
+//
+// var graphEdges = someGraph.getEdges();
+// for (var i in graphVertices){
+//     document.write(' ' + graphVertices[i].getX() + ' ' + graphVertices[i].getY() + ' ');
+// }
+// // document.write(someGraph.getVertices());
+// // document.write(someGraph.getEdges());
+//
