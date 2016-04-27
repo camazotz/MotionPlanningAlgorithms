@@ -23,6 +23,8 @@
 
 
 <script src = ./jquery-2.2.3.js></script>
+<script src=./index.js></script>
+
 <script src=./helperFunctions.js></script>
 <script src="PRMStar.js"></script>
 <script src="K-RRG.js"></script>
@@ -67,32 +69,24 @@ var obstacles= [];
     });
 function run() {
 
-//    var x1 = 124;
-//    var y1 = 404;
-//    var x2 = 77;
-//    var y2 = 421;
-//    var idx = 3;
-//    var cx = 98;
-//    var cy = 367;
-//    var r = 52;
-//    $('#theSVG').html($('#theSVG').html()+'<circle id="vertex-'+idx+'" cx="'+cx+'"  cy="'+cy+'" r="'+r+'" stroke="black"  fill="blue"></circle>');
-//    $('#theSVG').html($('#theSVG').html()+'<line  x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2+' id="edge-'+idx+'"  stroke="black"  fill="red"></line>');
-//
-////    while(!link([cx,cy,r],new Vertex(x1,y1,"540"),new Vertex(x2,y2,"16040"))){
-////        console.log('something');
-////        y1++;
-////        $('#edge-3').attr('y1',y1);
-////    }
-//    console.log('linkTest: ' +link([cx,cy,r],new Vertex(x1,y1,"540"),new Vertex(x2,y2,"16040")));
-//    return;
-//    var result = k_RRG(obstacles,50,new Vertex(300,300,"300300"),0,600,0,600);
 
-//
-//    var start = [];
-//    start.push(50);
-//    start.push(50);
-//    var dest = [];
-    //var result = prm(obstacles, start,dest,50,10,0,600,0,600);
+    //var result = k_RRG(obstacles,200,new Vertex(300,300,"300300"),0,600,0,600);
+    var obs = [];
+    obs.push(119);
+    obs.push(38);
+    obs.push(42);
+    var source = new Vertex(78, 73, "105359");
+
+    var dest = new Vertex(154, 63, "142310");
+
+    var linkResult = link(obs, source, dest);
+console.log(linkResult);
+
+    var start = [];
+    start.push(50);
+    start.push(50);
+    var dest = [];
+    var result = prm(obstacles, start,dest,50,10,0,600,0,600);
     //var result = rrt(obstacles, start,dest,50,0,600,0,600);
 
     var vertices = [];
