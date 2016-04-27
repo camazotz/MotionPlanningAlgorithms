@@ -60,10 +60,8 @@ function rrtStar(obstacles, x_init, nMilestone, xleft, xright, ybottom, ytop){
 
 
             // for loop
-            console.log(nearVertices);
             for (j = 0; j < nearVertices.length; j++) {
                 var xNear2 = nearVertices[j];
-                console.log(xNear2);
                 dijkstra = graphlib.alg.dijkstra(rrtStarGraph, x_init.getId(), weight);
                 var xParent = "";
                 if (link(nearestVertex, steerVertex) &&
@@ -91,9 +89,9 @@ function rrtStar(obstacles, x_init, nMilestone, xleft, xright, ybottom, ytop){
 function distanceCost(vertexOne, vertexTwo){
     // Distance formula
     return  Math.sqrt(Math.pow((vertexOne.getX() - vertexTwo.getX()), 2) + Math.pow((vertexOne.getY() - vertexTwo.getY()), 2));
-
 }
 
 function cost(dijkstra, aVertex){
-    return dijkstra[aVertex.getId()].distance;
+    var cost =  dijkstra[aVertex.getId()].distance;
+    return cost;
 }

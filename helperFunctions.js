@@ -80,6 +80,32 @@ function Near(aGraph, aVertex, aRadius){
 
     return vertInRadius;
 }
+function kNearest(aGraph, aVertex, k){
+    if(k>aGraph.nodeCount) k=aGraph.nodeCount();
+    var allVertices = aGraph.nodes();
+    var kDistances = [];
+    for(var z=0;z<k;z++) kDistances[z] =9999;
+    var kVertices = [];
+
+    for (var i = 0; i < allVertices.length; i++) {
+
+        var eachVertex = aGraph.node(allVertices[i]);
+
+        // Apply distance formula
+        var dist = Math.sqrt(Math.pow((eachVertex.getX() - aVertex.getX()), 2) + Math.pow((eachVertex.getY() - aVertex.getY()), 2));
+
+        for(var j=0; j<k; j++) {
+            if(kDistances[j]>dist) {
+                kDistances.splice(j,0,dist);
+                kVertices.splice(j,0,eachVertex);
+                break;
+            }
+        }
+    }
+
+    console.log(kVertices.slice(0,k));
+    return kVertices.slice(0,k);
+}
 
 function Nearest(aGraph, aPoint){
     var allVertices = aGraph.nodes();
@@ -151,7 +177,7 @@ function clear(obstacles, testVertex){
 }
 function steer(base, goal) {
     // inputs base and goal are vertices as defined by Vertex object
-    var eta = 20; // change this if necessary !!!!
+    var eta = 50; // change this if necessary !!!!
     var dist = Math.sqrt(Math.pow(goal.xcor-base.xcor, 2) + Math.pow((goal.ycor-base.ycor), 2));
     if(dist<=eta)
         return new Vertex(goal.xcor,goal.ycor,goal.xcor.toString()+goal.ycor.toString()); //{xcor: goal.xcor, ycor:goal.ycor};

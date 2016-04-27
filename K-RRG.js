@@ -15,7 +15,10 @@ function k_RRG(obstacles, nMilestone, x_init, xleft, xright, ybottom, ytop) {
         var nearestVertex = Nearest(graph, randVertex);
         var newVertex = steer(nearestVertex, randVertex);
         if (link(obstacles, nearestVertex, newVertex)) {
-            var nearSet = Near(graph, newVertex, 2 * Math.E * (Math.log(graph.nodeCount()) / Math.log(2)));
+            var k = 2 * Math.E ;
+            console.log('n count: ' +graph.nodeCount());
+            console.log('k: '+k);
+            var nearSet = kNearest(graph, newVertex, k );
             graph.setNode(newVertex.getId(), newVertex);
 
             var dist = Math.sqrt(Math.pow((newVertex.getX() - nearestVertex.getX()), 2) + Math.pow((newVertex.getY() - nearestVertex.getY()), 2));
@@ -32,7 +35,6 @@ function k_RRG(obstacles, nMilestone, x_init, xleft, xright, ybottom, ytop) {
                     graph.setEdge(newVertex.getId(), nearVertex.getId(), dist2);
                 }
             }
-
         }
     }
 
