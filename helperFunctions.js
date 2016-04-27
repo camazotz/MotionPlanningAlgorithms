@@ -48,6 +48,134 @@ Vertex.prototype = {
 
 };
 
+function AdjList() {
+    this.adjList = [];
+}
+AdjList.prototype = {
+    constructor: AdjList,
+    push: function(edge) {
+        var source = edge.getSource();
+        this.adjList[source.getId()][edge.getId()] = edge;
+
+    },
+    exists: function(edge) {
+        var source = edge.getSource();
+        return this.adjList[source.getId()][edge.getId()] !==undefined;
+    },
+    forEach: function(run) {
+        for(var list in this.adjList) {
+            if(this.adjList.hasOwnProperty(list)) {
+                for(var idx in this.adjList[list]) {
+                    if(this.adjList[list].hasOwnProperty(idx)) {
+                        var edge = this.adjList[list][idx];
+                        run(edge, list+"-"+idx);
+                    }
+                }
+            }
+        }
+    },
+    at: function(sourceIdx, adjNodeIdx) {
+        var i=0;
+        for(var list in this.adjList) {
+            if(sourceIdx!==i) {
+                i++;
+                continue;
+            }
+            if(this.adjList.hasOwnProperty(list)) {
+                var j=0;
+                for(var idx in this.adjList[list]) {
+                    if(adjNodeIdx!==j) {
+                        j++;
+                        continue;
+                    }
+                    if(this.adjList[list].hasOwnProperty(idx)) {
+                        var edge = this.adjList[list][idx];
+                        return edge;
+                    }
+                    j++;
+                }
+            }
+            i++;
+        }
+    },
+    atList: function(sourceIdx) {
+        var i=0;
+        for(var list in this.adjList) {
+            if(sourceIdx!==i) {
+                i++;
+            }
+            else return this.adjList[list];
+        }
+    }
+};
+
+function distance(one, two) {
+    return Math.pow(Math.pow(one.xcor - two.xcor, 2) + Math.pow(one.ycor - two.ycor, 2), 0.5)
+}
+
+function calcShortestPath(start, goal, graph) {  // vertex, vertex, graph
+    var adj = graph.getAdjList();
+    var nodes = graph.getVertices();
+    var snode = null;
+    var smin = 1E8;
+    var gnode = null;
+    var gmin = 1E8;
+    for (var i = 0; i < nodes.length; i++) {
+        var sdist = distance(start, nodes[i]);
+        if (sdist < smin) {
+            smin = sdist;
+            snode = i
+        }
+        var gdist = distance(goal, nodes[i]);
+        if (gdist < gmin) {
+            gmin = gdist;
+            gnode = i
+        }
+    }
+    var shortest = [];
+    var previous = [];
+    var q = [];
+    for (var i = 0; i < nodes.length; i++) {
+        shortest.push(1E11);
+        previous.push(-1);
+        q.push(i)
+    }
+    shortest[snode] = 0;
+    while (q.length > 0) {
+        var u = -1;
+        var ui =
+            -1;
+        var min = 1E11;
+        for (var j = 0; j < q.length; j++) {
+            var cand = q[j];
+            if (shortest[cand] < min) {
+                min = shortest[cand];
+                ui = j;
+                u = cand
+            }
+        }
+        if (shortest[u] == 1E11 || u == -1)break;
+        q.remove(ui);
+        for (var i = 0; i < adj[u].length; i++) {
+            var adjacentNode = adj.at(u,i);
+            var alt = shortest[u] + distance(nodes[u], nodes[adjacentNode]);
+            if (alt < shortest[adjacentNode]) {
+                shortest[adjacentNode] = alt;
+                previous[adjacentNode] = u
+            }
+        }
+    }
+    var path = [];
+    var curr = gnode;
+    while (true) {
+        path.push(nodes[curr]);
+        curr = previous[curr];
+        if (curr == snode || curr == null)break
+    }
+    path.push(nodes[snode]);
+    return path
+}
+
 /*
  Edge class and attributes
  */
@@ -89,26 +217,6 @@ Edge.prototype = {
 
 };
 
-/*
- Graph class and attributes
- */
-
-function Graph(vertList, edgeList) {
-    this.vertices = vertList;
-    this.edges = edgeList;
-}
-
-Graph.prototype = {
-    constructor: Graph,
-
-    getVertices:function() {
-        return this.vertices;
-    },
-
-    getEdges:function() {
-        return this.edges;
-    }
-};
 
 /*
  Probabilistic Roadmap (optimized)

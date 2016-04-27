@@ -27,6 +27,7 @@
 <script src="PRMStar.js"></script>
 <script src="K-RRG.js"></script>
 <script src="RRT.js"></script>
+<script src="graphlib.js"></script>
 <script>
 
 
@@ -84,32 +85,51 @@ function run() {
 ////    }
 //    console.log('linkTest: ' +link([cx,cy,r],new Vertex(x1,y1,"540"),new Vertex(x2,y2,"16040")));
 //    return;
-    var result = k_RRG(obstacles,200,new Vertex(300,300,"300300"),0,600,0,600);
+//    var result = k_RRG(obstacles,50,new Vertex(300,300,"300300"),0,600,0,600);
 
-
-    var start = [];
-    start.push(50);
-    start.push(50);
-    var dest = [];
+//
+//    var start = [];
+//    start.push(50);
+//    start.push(50);
+//    var dest = [];
     //var result = prm(obstacles, start,dest,50,10,0,600,0,600);
     //var result = rrt(obstacles, start,dest,50,0,600,0,600);
 
-    var vertices = result.getVertices();
-    var edges = result.getEdges();
-    vertices.forEach(function(vertex, idx, array) {
+    var vertices = [];
+    var adjList = new AdjList();
+    var graph = new graphlib.Graph();
+    var v1 = new Vertex(20,20,"2020");
+    var v2 = new Vertex(40,40,"4040");
+    var v3 = new Vertex(30,60,"3060");
+    graph.setNode(v1.getId(),v1);
+    graph.setNode(v2.getId(),v2);
+    graph.setNode(v3.getId(),v3);
+    graph.setEdge(v1.getId(),v2.getId(),5);
+    graph.setEdge(v1.getId(),v3.getId(),15);
+    graph.setEdge(v2.getId(),v3.getId(),25);
 
+
+    graph.nodes().forEach(function(nodeLabel, idx, array) {
+        vertex = graph.node(nodeLabel);
         $('#theSVG').html($('#theSVG').html()+'<circle id="vertex-'+idx+'" cx="'+vertex.getX()+'"  cy="'+vertex.getY()+'" r="4" stroke="black"  fill="blue"></circle>');
 
     });
-    edges.forEach(function(edge, idx, array) {
-        var x1 = edge.getSource().getX();
-        var y1 = edge.getSource().getY();
-        var x2 = edge.getDestination().getX();
-        var y2 = edge.getDestination().getY();
-        $('#theSVG').html($('#theSVG').html()+'<line  x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2+' id="edge-'+idx+'"  stroke="black"  fill="red"></line>');
+    graph.edges().forEach(function(edge, idx, array) {
+        var weight = graph.edge(edge);
+        var source = graph.node(edge.v);
+        var dest = graph.node(edge.w);
+        var x1 = source.getX();
+        var y1 = source.getY();
+        var x2 = dest.getX();
+        var y2 = dest.getY();
+         $('#theSVG').html($('#theSVG').html()+'<line  x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2+' id="edge-'+idx+'"  stroke="black"  fill="red"></line>');
+
     });
-    console.log(randomNums);
-    $('body').append(randomNums.toString());
+
+    function weight(e) { return graph.edge(e); }
+    var result = graphlib.alg.dijkstra(graph, v1.getId(), weight);
+    console.log(result);
+
 }
 </script>
 
