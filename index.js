@@ -80,4 +80,4 @@ function distanceToLineSegment(lx1, ly1, lx2, ly2, px, py)
 
 distanceToLineSegment.squared = distanceSquaredToLineSegment;
 distanceToLineSegment.squaredWithPrecalc = distanceSquaredToLineSegment2;
-module.exports = distanceToLineSegment;
+// module.exports = distanceToLineSegment;

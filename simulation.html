@@ -5,22 +5,24 @@
 <meta charset="utf-8"> <title>RRT</title>
 </head>
 
-<body style="font-family:sans-serif; font-size:15px; width:600px; margin-left:auto; margin-right:auto; ">
+<body style="font-family:sans-serif; display: block; font-size:15px; width:600px; margin:auto; ">
+
+<div>
+<div><h1>Motion Planning Algorithms</h1></div>
+<div id="draw" style="width: 710px;height: 600px; margin-left: auto; display:inline-block">
 
 
-
-<div id="draw" style="width: 700px;height: 600px; display:inline-block">
- <!--<img src="NewtonDrawing.jpg" width="500" height="500">-->
-
-<svg id="theSVG" style="border:1px solid black; background-color:#e0e0e0;width: 600px;height: 600px;">
+<svg id="theSVG" style="border:1px solid black; background-color:lightgray; float:left; width: 600px;height: 600px;">
 </svg>
 
 
-<div style="vertical-align: top; display: inline-block"><button onclick="run()" style="height: 20px; width: 50px;">Run</button></div>
-<!--</canvas>-->
+<div style="width:95px; height:600px; vertical-align: top; display: inline-block;background-color:darkgray; float:right; ">
+    <button onclick="run()" style="height: 40px; width:inherit;">Run</button>
+    <button onclick="clearIt()" style="height: 40px; width:inherit;">Clear</button></div>
+
 
 </div>
-
+</div>
 
 <script src = ./jquery-2.2.3.js></script>
 <script src=./index.js></script>
@@ -33,7 +35,8 @@
 <script>
 
 
-
+var init = new Vertex(100,500,"100500");
+var goal = new Vertex(500,100,"500100");
 var obstacles= [];
     $(function () {
     var drawingState = "none";
@@ -41,14 +44,14 @@ var obstacles= [];
     var currentObstacle = 1;
     $("#theSVG").click(function (e) {
         if (drawingState == "none") {
-            $('#theSVG').html($('#theSVG').html()+'<line  x1='+e.offsetX+' y1='+e.offsetY+'  id="dashedLine-'+currentObstacle+'" stroke-dasharray="5" stroke="black"  fill="red"></line>');
+            $('#theSVG').html($('#theSVG').html()+'<line  x1='+e.offsetX+' y1='+e.offsetY+' class="dashed" id="dashedLine-'+currentObstacle+'" stroke-dasharray="5" stroke="black"  fill="red"></line>');
             $('#dashedLine-'+currentObstacle).hide();
             drawingState = "drawing";
             circumX = e.offsetX;
             circumY = e.offsetY;
         } else if (drawingState == "drawing") {
             var radius = Math.round(Math.sqrt(Math.pow(circumX-e.offsetX, 2) + Math.pow(circumY-e.offsetY, 2)));
-            $('#theSVG').html('<circle id="circle-'+currentObstacle+'" r="4" stroke="black"  fill="red"></circle>'+$('#theSVG').html());
+            $('#theSVG').html('<circle class="obstacle" id="circle-'+currentObstacle+'" r="4" stroke="black"  fill="red"></circle>'+$('#theSVG').html());
             $('#circle-'+currentObstacle).attr("cx",e.offsetX);
             $('#circle-'+currentObstacle).attr("cy",e.offsetY);
             $('#circle-'+currentObstacle).attr("r",radius);
@@ -66,48 +69,46 @@ var obstacles= [];
             $('#dashedLine-'+currentObstacle).show();
         });
 
+        drawStartEnd();
+
     });
+
+function drawStartEnd() {
+    $('#theSVG').html($('#theSVG').html()+'<circle id="vertex-init" cx="'+init.getX()+'"  cy="'+init.getY()+'" r="4" stroke="black"  fill="lightgreen"></circle>');
+    $('#theSVG').html($('#theSVG').html()+'<circle id="vertex-init" cx="'+goal.getX()+'"  cy="'+goal.getY()+'" r="4" stroke="black"  fill="orange"></circle>');
+
+}
+
+function clearIt() {
+    $('.node').remove();
+    $('line:not(.dashed)').remove();
+    drawStartEnd();
+}
 function run() {
+    clearIt();
+    var graph = k_RRG(obstacles,50,init,0,600,0,600);
 
+//    var graph = new graphlib.Graph();
+//    var v1 = new Vertex(20,20,"2020");
+//    var v2 = new Vertex(40,40,"4040");
+//    var v3 = new Vertex(30,60,"3060");
+//    graph.setNode(v1.getId(),v1);
+//    graph.setNode(v2.getId(),v2);
+//    graph.setNode(v3.getId(),v3);
+//    graph.setEdge(v1.getId(),v2.getId(),5);
+//    graph.setEdge(v1.getId(),v3.getId(),15);
+//    graph.setEdge(v2.getId(),v3.getId(),25);
+//    console.log(graph.nodes());
+//    console.log(graph.edges());
 
-    //var result = k_RRG(obstacles,200,new Vertex(300,300,"300300"),0,600,0,600);
-    var obs = [];
-    obs.push(119);
-    obs.push(38);
-    obs.push(42);
-    var source = new Vertex(78, 73, "105359");
-
-    var dest = new Vertex(154, 63, "142310");
-
-    var linkResult = link(obs, source, dest);
-console.log(linkResult);
-
-    var start = [];
-    start.push(50);
-    start.push(50);
-    var dest = [];
-    var result = prm(obstacles, start,dest,50,10,0,600,0,600);
-    //var result = rrt(obstacles, start,dest,50,0,600,0,600);
-
-    var vertices = [];
-    var adjList = new AdjList();
-    var graph = new graphlib.Graph();
-    var v1 = new Vertex(20,20,"2020");
-    var v2 = new Vertex(40,40,"4040");
-    var v3 = new Vertex(30,60,"3060");
-    graph.setNode(v1.getId(),v1);
-    graph.setNode(v2.getId(),v2);
-    graph.setNode(v3.getId(),v3);
-    graph.setEdge(v1.getId(),v2.getId(),5);
-    graph.setEdge(v1.getId(),v3.getId(),15);
-    graph.setEdge(v2.getId(),v3.getId(),25);
-
-
+    connectGoal(graph,obstacles, goal);
     graph.nodes().forEach(function(nodeLabel, idx, array) {
         vertex = graph.node(nodeLabel);
-        $('#theSVG').html($('#theSVG').html()+'<circle id="vertex-'+idx+'" cx="'+vertex.getX()+'"  cy="'+vertex.getY()+'" r="4" stroke="black"  fill="blue"></circle>');
+        if(vertex==init||vertex==goal) return;
+        $('#theSVG').html($('#theSVG').html()+'<circle class="node" id="vertex-'+idx+'" cx="'+vertex.getX()+'"  cy="'+vertex.getY()+'" r="4" stroke="black"  fill="blue"></circle>');
 
     });
+
     graph.edges().forEach(function(edge, idx, array) {
         var weight = graph.edge(edge);
         var source = graph.node(edge.v);
@@ -121,8 +122,23 @@ console.log(linkResult);
     });
 
     function weight(e) { return graph.edge(e); }
-    var result = graphlib.alg.dijkstra(graph, v1.getId(), weight);
-    console.log(result);
+    var result = graphlib.alg.dijkstra(graph, init.getId(), weight);
+
+    var current = goal.getId();
+    while(current!==init.getId()) {
+        if(result[current]==undefined) break;
+        var next = result[current].predecessor;
+        var currentNode = graph.node(current);
+        var nextNode = graph.node(next);
+        var x1 = currentNode.getX();
+        var y1 = currentNode.getY();
+        var x2 = nextNode.getX();
+        var y2 = nextNode.getY();
+        $('#theSVG').html($('#theSVG').html()+'<line  x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2+' id="edge-'+currentNode+'-'+nextNode+'" stroke-width="3px" stroke="purple"  fill="purple"></line>');
+
+        current = next;
+
+    }
 
 }
 </script>

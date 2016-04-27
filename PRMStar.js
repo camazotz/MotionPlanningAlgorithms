@@ -6,7 +6,6 @@
 
 function prm (obstacles, testP, destP, nMilestone, mNeighbor,
               xleft, xright, ybottom, ytop) {
-    // document.write('inprm');
     var vertices = [];
     var edges = [];
     var prmStarGraph = new Graph(vertices, edges);

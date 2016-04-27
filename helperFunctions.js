@@ -240,19 +240,17 @@ function SampleFree(xRange, yRange, obstacles){
 function Near(aGraph, aVertex, aRadius){
 
     var vertInRadius = [];                      // Vertices contained in radius
-    var allVertices = aGraph.getVertices();
+    var allVertices = aGraph.nodes();
 
     for (var i = 0; i < allVertices.length; i++){
-        var eachVertex = allVertices[i];
+        var eachVertex = aGraph.node(allVertices[i]);
 
-        //document.write('befdist');
-        //document.write(allVertices[i]);
         // Apply distance formula
         var dist = Math.sqrt(Math.pow((eachVertex.getX() - aVertex.getX()), 2) + Math.pow((eachVertex.getY() - aVertex.getY()), 2));
 
         //document.write('after dist: ' + dist);
         if (dist != 0 && dist <= aRadius){
-            vertInRadius.push(allVertices[i]);
+            vertInRadius.push(aGraph.node(allVertices[i]));
         }
     }
 
@@ -260,20 +258,20 @@ function Near(aGraph, aVertex, aRadius){
 }
 
 function Nearest(aGraph, aPoint){
-    var allVertices = aGraph.getVertices();
+    var allVertices = aGraph.nodes();
     var nearestVertex = null;
     var minDist = Infinity;
 
     for (var i = 0; i < allVertices.length; i++) {
 
-        var eachVertex = allVertices[i];
+        var eachVertex = aGraph.node(allVertices[i]);
 
         // Apply distance formula
         var dist = Math.sqrt(Math.pow((eachVertex.getX() - aPoint.getX()), 2) + Math.pow((eachVertex.getY() - aPoint.getY()), 2));
 
         if (dist < minDist){
             minDist = dist;
-            nearestVertex = allVertices[i];
+            nearestVertex = eachVertex;
         }
     }
     return nearestVertex;
@@ -339,5 +337,14 @@ function steer(base, goal) {
         var y = Math.round(base.ycor + eta * Math.sin(angle));
 
         return  new Vertex(x,y,x.toString()+y.toString());//{xcor:x,ycor:y};
+    }
+}
+
+function connectGoal(graph, obstacles, goal) {
+    var nearestNode = Nearest(graph, goal);
+    if(link(obstacles, goal, nearestNode)) {
+        graph.setNode(goal.getId(),goal);
+        var dist = Math.sqrt(Math.pow((goal.getX() - nearestNode.getX()), 2) + Math.pow((goal.getY() - nearestNode.getY()), 2));
+        graph.setEdge(nearestNode.getId(),goal.getId(), dist);
     }
 }
