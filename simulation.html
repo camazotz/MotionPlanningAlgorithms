@@ -103,7 +103,7 @@ function run() {
     clearIt();
     var graph;
     if(selectedAlgorithm==='k-RRG') graph= k_RRG(obstacles,100,init,0,600,0,600);
-    else if(selectedAlgorithm==='PRM-star') graph = prm_star(obstacles,init,70,0,600,0,600);
+    else if(selectedAlgorithm==='PRM-star') graph = prm_star(obstacles,init,50,0,600,0,600);
     else if(selectedAlgorithm==='RRT') graph = rrt(obstacles,init,200,0,600,0,600);
     else return;
 
