@@ -17,8 +17,16 @@
 
 
 <div style="width:95px; height:600px; vertical-align: top; display: inline-block;background-color:darkgray; float:right; ">
+    <h4 style="text-align: center">Options</h4>
+    <input title="PRM*" type="radio" name="algorithm" value="PRM-star"/>PRM*<br>
+    <input title="RRT" type="radio" name="algorithm" value="RRT" checked/>RRT<br>
+    <input title="RRT*" type="radio" name="algorithm" value="RRT-star"/>RRT*<br>
+    <input title="RRG" type="radio" name="algorithm" value="k-RRG"/>k-RRG<br>
+    <br>
     <button onclick="run()" style="height: 40px; width:inherit;">Run</button>
-    <button onclick="clearIt()" style="height: 40px; width:inherit;">Clear</button></div>
+    <button onclick="clearIt()" style="height: 40px; width:inherit;">Clear Roadmap</button>
+    <button onclick="clearAll()" style="height: 40px; width:inherit;">Clear All</button>
+</div>
 
 
 </div>
@@ -38,6 +46,7 @@
 var init = new Vertex(100,500,"100500");
 var goal = new Vertex(500,100,"500100");
 var obstacles= [];
+var selectedAlgorithm="RRT";
     $(function () {
     var drawingState = "none";
     var circumX, circumY;
@@ -63,14 +72,14 @@ var obstacles= [];
         }
     });
         $("#theSVG").mousemove(function (e) {
-//            console.log(e.offsetX+ " "+e.offsetY);
             $('#dashedLine-'+currentObstacle).attr("x2",e.offsetX);
             $('#dashedLine-'+currentObstacle).attr("y2",e.offsetY);
             $('#dashedLine-'+currentObstacle).show();
         });
-
         drawStartEnd();
-
+        $("input:radio[name=algorithm]").click(function() {
+            selectedAlgorithm = $(this).val();
+        });
     });
 
 function drawStartEnd() {
@@ -84,22 +93,19 @@ function clearIt() {
     $('line:not(.dashed)').remove();
     drawStartEnd();
 }
+
+function clearAll() {
+    obstacles= [];
+    $('#theSVG').html('');
+    drawStartEnd();
+}
 function run() {
     clearIt();
-    var graph = k_RRG(obstacles,50,init,0,600,0,600);
-
-//    var graph = new graphlib.Graph();
-//    var v1 = new Vertex(20,20,"2020");
-//    var v2 = new Vertex(40,40,"4040");
-//    var v3 = new Vertex(30,60,"3060");
-//    graph.setNode(v1.getId(),v1);
-//    graph.setNode(v2.getId(),v2);
-//    graph.setNode(v3.getId(),v3);
-//    graph.setEdge(v1.getId(),v2.getId(),5);
-//    graph.setEdge(v1.getId(),v3.getId(),15);
-//    graph.setEdge(v2.getId(),v3.getId(),25);
-//    console.log(graph.nodes());
-//    console.log(graph.edges());
+    var graph;
+    if(selectedAlgorithm==='k-RRG') graph= k_RRG(obstacles,100,init,0,600,0,600);
+    else if(selectedAlgorithm==='PRM-star') graph = prm_star(obstacles,init,70,0,600,0,600);
+    else if(selectedAlgorithm==='RRT') graph = rrt(obstacles,init,200,0,600,0,600);
+    else return;
 
     connectGoal(graph,obstacles, goal);
     graph.nodes().forEach(function(nodeLabel, idx, array) {
@@ -122,12 +128,12 @@ function run() {
     });
 
     function weight(e) { return graph.edge(e); }
-    var result = graphlib.alg.dijkstra(graph, init.getId(), weight);
+    var dijkstra = graphlib.alg.dijkstra(graph, init.getId(), weight);
 
     var current = goal.getId();
     while(current!==init.getId()) {
-        if(result[current]==undefined) break;
-        var next = result[current].predecessor;
+        if(dijkstra[current]==undefined||dijkstra[current].predecessor==undefined) break;
+        var next = dijkstra[current].predecessor;
         var currentNode = graph.node(current);
         var nextNode = graph.node(next);
         var x1 = currentNode.getX();
