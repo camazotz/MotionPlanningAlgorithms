@@ -9,26 +9,23 @@
 
 
 function Parent(aGraph, aVertex){
-    var graphEdges = aGraph.getEdges();
 
-    for (var i in graphEdges){
-        if (graphEdges[i].getDestination().getId() == aVertex.getId()){
-            return graphEdges[i].getSource();
+    aGraph.edges().forEach(function(edge, idx, array) {
+        if (aGraph.node(edge.w).getId() === aVertex.getId()){
+            return aGraph.node(edge.v);
         }
-    }
+    });
 }
 
-function rrtStar(obstacles, testP, destP, nMilestone,
-                 xleft, xright, ybottom, ytop){
-    var vertices = [];
-    var edges = [];
-    var rrtStarGraph = new Graph(vertices, edges);
+function rrtStar(obstacles, x_init, nMilestone, xleft, xright, ybottom, ytop){
+
+    var rrtStarGraph = new graphlib.Graph();
+    function weight(e) { return rrtStarGraph.edge(e); }
 
     var xRange = xright - xleft;
     var yRange = ytop - ybottom;
 
-    var testVertex = new Vertex(testP[0], testP[1], String(testP[0]) + String(testP[1]));
-    vertices.push(testVertex);
+    rrtStarGraph.setNode(x_init.getId(),x_init);
     for (var i = 0; i < nMilestone; i++) {
 
         var randVertex = SampleFree(xRange, yRange, obstacles);
@@ -43,61 +40,48 @@ function rrtStar(obstacles, testP, destP, nMilestone,
 
             var connRadius = 20;    // placeholder
             var nearVertices = Near(rrtStarGraph, steerVertex, connRadius);
-            vertices.push(steerVertex);
+            rrtStarGraph.setNode(steerVertex.getId(),steerVertex);
             var xMin = nearestVertex;
+            var dijkstra = graphlib.alg.dijkstra(rrtStarGraph, x_init.getId(), weight);
+            var cMin = cost(dijkstra,nearestVertex) + dist;
 
-            var cMin = Cost(nearestVertex) + dist;
-
-            for (var xNear in nearVertices){
+            for (var j = 0; j < nearVertices.length; j++) {
+                var xNear = nearVertices[j];
+                if(!nearVertices.hasOwnProperty(xNear)) continue;
                 if (link(nearestVertex, steerVertex) &&
-                    (Cost(xNear) + distanceCost(xNear, steerVertex) < cMin)) {
+                    (cost(dijkstra,xNear) + distanceCost(xNear, steerVertex) < cMin)) {
                     xMin = xNear;
-                    cMin = Cost(xNear) + distanceCost(xNear, steerVertex);
+                    cMin = cost(dijkstra,xNear) + distanceCost(xNear, steerVertex);
                 }
             }
 
-            // Add Edge
 
-            var sToDestId = xMin.getId() + steerVertex.getId();
+            rrtStarGraph.setEdge(xMin.getId(), steerVertex.getId(), dist);
 
-            var sToDestExists = false;
-            for (var k = 0; k < edges.length; k++){
-                //document.write(String(edges[k].getId() === sToDestId) + '\n');
-                if (edges[k].getId() === sToDestId){
-                    sToDestExists = true;
-                }
-            }
-
-            if (sToDestExists == false && dist != 0) {
-                edges.push(new Edge(xMin, steerVertex, dist, xMin.getId() + steerVertex.getId()));
-            }
 
             // for loop
-
-            for (var xNear2 in nearVertices){
-                var xParent = ""
+            console.log(nearVertices);
+            for (j = 0; j < nearVertices.length; j++) {
+                var xNear2 = nearVertices[j];
+                console.log(xNear2);
+                dijkstra = graphlib.alg.dijkstra(rrtStarGraph, x_init.getId(), weight);
+                var xParent = "";
                 if (link(nearestVertex, steerVertex) &&
-                    (Cost(xNear2) + distanceCost(xNear2, steerVertex) < Cost(xNear2))) {
+                    (cost(dijkstra,xNear2) + distanceCost(xNear2, steerVertex) < cost(dijkstra,xNear2))) {
                     xParent = Parent(xNear2);
                 }
                 
                 var edgeDist = distanceCost(steerVertex, xNear2);
                 
                 if (xParent == ""){
-                    edges.push(new Edge(steerVertex, xNear2, edgeDist, steerVertex.getId() + xNear2.getId()));
+                    rrtStarGraph.setEdge(steerVertex.getId(), xNear2.getId(), edgeDist);
                 }
-
                 else{
-                    var parentNearId = xParent.getId() + xNear2.getId();
-                    for (var edgeInd = 0; edgeInd < edges.length; edgeInd++){
-                        if (edges[edgeInd].getId() == parentNearId){
-                            edges.splice(edgeInd, 1,
-                            new Edge(steerVertex, xNear2, edgeDist, steerVertex.getId() + xNear2.getId()));
-                        }
-                    }
+                    rrtStarGraph.removeEdge(xParent,xNear2);
+                    rrtStarGraph.setEdge(steerVertex.getId(), xNear2.getId(), edgeDist);
+                    
                 }
             }
-
         }
     }
 
@@ -106,12 +90,10 @@ function rrtStar(obstacles, testP, destP, nMilestone,
 
 function distanceCost(vertexOne, vertexTwo){
     // Distance formula
-    var dist = Math.sqrt(Math.pow((vertexOne.getX() - vertexTwo.getX()), 2)
-        + Math.pow((vertexOne.getY() - vertexTwo.getY()), 2));
-    return dist;
+    return  Math.sqrt(Math.pow((vertexOne.getX() - vertexTwo.getX()), 2) + Math.pow((vertexOne.getY() - vertexTwo.getY()), 2));
 
 }
 
-function Cost(aVertex){
-
+function cost(dijkstra, aVertex){
+    return dijkstra[aVertex.getId()].distance;
 }

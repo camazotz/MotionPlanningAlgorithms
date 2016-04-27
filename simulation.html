@@ -19,8 +19,8 @@
 <div style="width:95px; height:600px; vertical-align: top; display: inline-block;background-color:darkgray; float:right; ">
     <h4 style="text-align: center">Options</h4>
     <input title="PRM*" type="radio" name="algorithm" value="PRM-star"/>PRM*<br>
-    <input title="RRT" type="radio" name="algorithm" value="RRT" checked/>RRT<br>
-    <input title="RRT*" type="radio" name="algorithm" value="RRT-star"/>RRT*<br>
+    <input title="RRT" type="radio" name="algorithm" value="RRT"/>RRT<br>
+    <input title="RRT*" type="radio" name="algorithm" value="RRT-star" checked/>RRT*<br>
     <input title="RRG" type="radio" name="algorithm" value="k-RRG"/>k-RRG<br>
     <br>
     <button onclick="run()" style="height: 40px; width:inherit;">Run</button>
@@ -39,6 +39,7 @@
 <script src="PRMStar.js"></script>
 <script src="K-RRG.js"></script>
 <script src="RRT.js"></script>
+<script src="RRTStar.js"></script>
 <script src="graphlib.js"></script>
 <script>
 
@@ -46,7 +47,7 @@
 var init = new Vertex(100,500,"100500");
 var goal = new Vertex(500,100,"500100");
 var obstacles= [];
-var selectedAlgorithm="RRT";
+var selectedAlgorithm="RRT-star";
     $(function () {
     var drawingState = "none";
     var circumX, circumY;
@@ -105,6 +106,7 @@ function run() {
     if(selectedAlgorithm==='k-RRG') graph= k_RRG(obstacles,100,init,0,600,0,600);
     else if(selectedAlgorithm==='PRM-star') graph = prm_star(obstacles,init,70,0,600,0,600);
     else if(selectedAlgorithm==='RRT') graph = rrt(obstacles,init,200,0,600,0,600);
+    else if(selectedAlgorithm==='RRT-star') graph = rrtStar(obstacles,init,200,0,600,0,600);
     else return;
 
     connectGoal(graph,obstacles, goal);
@@ -129,7 +131,7 @@ function run() {
 
     function weight(e) { return graph.edge(e); }
     var dijkstra = graphlib.alg.dijkstra(graph, init.getId(), weight);
-
+    console.log(dijkstra);
     var current = goal.getId();
     while(current!==init.getId()) {
         if(dijkstra[current]==undefined||dijkstra[current].predecessor==undefined) break;
