@@ -171,22 +171,57 @@ function Nearest(aGraph, aPoint){
     return nearestVertex;
 }
 
-// function link(obstacles, end1, end2){
-//
-//     for(var i=0;i<obstacles.length/3; i=i+3) {
-//         var obstacle_x = obstacles[i];
-//         var obstacle_y = obstacles[i+1];
-//         var obstacle_r = obstacles[i+2];
-//         var centerToLine = Math.abs((end2.ycor-end1.ycor)*obstacle_x-(end2.xcor-end1.xcor)*obstacle_y+end2.xcor*end1.ycor-end2.ycor*end1.xcor)/Math.hypot(end2.ycor-end1.ycor,end2.xcor-end1.xcor);
-//         if(centerToLine<=obstacle_r)
-//
-//             return false;
-//     }
-//
-//
-//     return true;
-// }
+/*
+function link(obstacles, end1, end2){
 
+    var nextIndex = 0;
+    var numObstacles = obstacles.length / 3;
+
+    for(var i=0;i < numObstacles; i++) {
+        var obstacle_x = obstacles[nextIndex++];
+        var obstacle_y = obstacles[nextIndex++];
+        var obstacle_r = obstacles[nextIndex++];
+        var centerToLine = Math.abs((end2.ycor-end1.ycor)*obstacle_x-(end2.xcor-end1.xcor)*obstacle_y+end2.xcor*end1.ycor-end2.ycor*end1.xcor)/Math.hypot(end2.ycor-end1.ycor,end2.xcor-end1.xcor);
+        // var slope = (end2.getY() - end1.getY()) / (end2.getX() - end1.getX());
+        // var intercept = end2.getY() - (slope * end2.getX());
+        // var Avariable = -slope;
+        // var Cvariable = -intercept;
+        // var distToPoint = (Math.abs((Avariable * obstacle_x) + (1 * obstacle_y) + Cvariable)) / (Math.sqrt(Math.pow(Avariable, 2) + Math.pow(1, 2)));
+        //
+        // if(distToPoint<=obstacle_r)
+        //     return false;
+        if(centerToLine < obstacle_r){
+            return false;
+        }
+    }
+
+
+    return true;
+}*/
+
+
+function link(obstacles, end1, end2){
+
+    var nextIndex = 0;
+    var numObstacles = obstacles.length / 3;
+
+    for(var i=0;i<numObstacles; i++) {
+        var obstacle_x = obstacles[nextIndex++];
+        var obstacle_y = obstacles[nextIndex++];
+        var obstacle_r = obstacles[nextIndex++];
+        var dist = distanceToLineSegment(end1.getX(), end1.getY(), end2.getX(), end2.getY(), obstacle_x, obstacle_y);
+        if(dist <=obstacle_r){
+            return false;
+        }
+
+    }
+
+    return true;
+}
+
+
+
+/*
 function link(obstacles, testVertex, destVertex){
 
     // Check if start point is in collision
@@ -218,7 +253,7 @@ function link(obstacles, testVertex, destVertex){
 
     /* Go in increments of 1 unit towards the destination point,
      checking each subsequent point for collision with an
-     obstacle.*/
+     obstacle.
     for (var i = 0; i < numIter; i++){
         //document.write('i: ', i);
 
@@ -282,7 +317,7 @@ function link(obstacles, testVertex, destVertex){
     }
 
     return true;
-}
+}*/
 
 
 function clear(obstacles, testVertex){

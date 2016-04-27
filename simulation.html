@@ -23,6 +23,9 @@
 
 
 <script src = ./jquery-2.2.3.js></script>
+<script src = ./sylvester.src.js></script>
+<script src=./index.js></script>
+
 <script src=./helperFunctions.js></script>
 <script src="PRMStar.js"></script>
 <script src="K-RRG.js"></script>
@@ -84,14 +87,23 @@ function run() {
 ////    }
 //    console.log('linkTest: ' +link([cx,cy,r],new Vertex(x1,y1,"540"),new Vertex(x2,y2,"16040")));
 //    return;
-    var result = k_RRG(obstacles,200,new Vertex(300,300,"300300"),0,600,0,600);
+    //var result = k_RRG(obstacles,200,new Vertex(300,300,"300300"),0,600,0,600);
+    var obs = [];
+    obs.push(119);
+    obs.push(38);
+    obs.push(42);
+    var source = new Vertex(78, 73, "105359");
 
+    var dest = new Vertex(154, 63, "142310");
+
+    var linkResult = link(obs, source, dest);
+console.log(linkResult);
 
     var start = [];
     start.push(50);
     start.push(50);
     var dest = [];
-    //var result = prm(obstacles, start,dest,50,10,0,600,0,600);
+    var result = prm(obstacles, start,dest,50,10,0,600,0,600);
     //var result = rrt(obstacles, start,dest,50,0,600,0,600);
 
     var vertices = result.getVertices();
@@ -108,8 +120,9 @@ function run() {
         var y2 = edge.getDestination().getY();
         $('#theSVG').html($('#theSVG').html()+'<line  x1='+x1+' y1='+y1+' x2='+x2+' y2='+y2+' id="edge-'+idx+'"  stroke="black"  fill="red"></line>');
     });
-    console.log(randomNums);
-    $('body').append(randomNums.toString());
+    console.log('debugging');
+    //console.log(randomNums);
+    //$('body').append(randomNums.toString());
 }
 </script>
 
