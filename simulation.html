@@ -18,14 +18,17 @@
 
 <div style="width:95px; height:600px; vertical-align: top; display: inline-block;background-color:darkgray; float:right; ">
     <h4 style="text-align: center">Options</h4>
-    <input title="PRM*" type="radio" name="algorithm" value="PRM-star"/>PRM*<br>
+    <input title="PRM*" type="radio" name="algorithm" value="PRM-star" checked/>PRM*<br>
     <input title="RRT" type="radio" name="algorithm" value="RRT"/>RRT<br>
-    <input title="RRT*" type="radio" name="algorithm" value="RRT-star" checked/>RRT*<br>
+    <input title="RRT*" type="radio" name="algorithm" value="RRT-star" />RRT*<br>
     <input title="RRG" type="radio" name="algorithm" value="k-RRG"/>k-RRG<br>
-    <br>
+    <br><br>
+    Samples: <br>  <input style="width:20px;" type="text" id="samples" value="50"/><br><br>
+    <span id="sL" style="display:none;">Steer const:  </span> <input style="display:none; width:20px;" type="text" id="tau" value="50"/><br><br>
     <button onclick="run()" style="height: 40px; width:inherit;">Run</button>
     <button onclick="clearIt()" style="height: 40px; width:inherit;">Clear Roadmap</button>
     <button onclick="clearAll()" style="height: 40px; width:inherit;">Clear All</button>
+
 </div>
 
 
@@ -47,7 +50,7 @@
 var init = new Vertex(100,500,"100500");
 var goal = new Vertex(500,100,"500100");
 var obstacles= [];
-var selectedAlgorithm="RRT-star";
+var selectedAlgorithm="PRM-star";
     $(function () {
     var drawingState = "none";
     var circumX, circumY;
@@ -78,8 +81,17 @@ var selectedAlgorithm="RRT-star";
             $('#dashedLine-'+currentObstacle).show();
         });
         drawStartEnd();
+//        $('#tau').hide()
         $("input:radio[name=algorithm]").click(function() {
             selectedAlgorithm = $(this).val();
+            if(selectedAlgorithm==='PRM-star') {
+                $('#tau').hide();
+                $('#sL').hide();
+            }
+            else {
+                $('#tau').show();
+                $('#sL').show();
+            }
         });
     });
 
@@ -100,13 +112,16 @@ function clearAll() {
     $('#theSVG').html('');
     drawStartEnd();
 }
+var tau;
 function run() {
     clearIt();
     var graph;
-    if(selectedAlgorithm==='k-RRG') graph= k_RRG(obstacles,60,init,0,600,0,600);
-    else if(selectedAlgorithm==='PRM-star') graph = prm_star(obstacles,init,50,0,600,0,600);
-    else if(selectedAlgorithm==='RRT') graph = rrt(obstacles,init,200,0,600,0,600);
-    else if(selectedAlgorithm==='RRT-star') graph = rrtStar(obstacles,init,200,0,600,0,600);
+    var ssize = $('#samples').val();
+    tau = $('#tau').val();
+    if(selectedAlgorithm==='k-RRG') graph= k_RRG(obstacles,ssize,init,0,600,0,600);
+    else if(selectedAlgorithm==='PRM-star') graph = prm_star(obstacles,init,ssize,0,600,0,600);
+    else if(selectedAlgorithm==='RRT') graph = rrt(obstacles,init,ssize,0,600,0,600);
+    else if(selectedAlgorithm==='RRT-star') graph = rrtStar(obstacles,init,ssize,0,600,0,600);
     else return;
 
     connectGoal(graph,obstacles, goal);

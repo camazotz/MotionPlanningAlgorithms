@@ -176,8 +176,9 @@ function clear(obstacles, testVertex){
     return true;
 }
 function steer(base, goal) {
+    console.log('found tau: '+tau);
     // inputs base and goal are vertices as defined by Vertex object
-    var eta = 50; // change this if necessary !!!!
+    var eta = tau; // change this if necessary !!!!
     var dist = Math.sqrt(Math.pow(goal.xcor-base.xcor, 2) + Math.pow((goal.ycor-base.ycor), 2));
     if(dist<=eta)
         return new Vertex(goal.xcor,goal.ycor,goal.xcor.toString()+goal.ycor.toString()); //{xcor: goal.xcor, ycor:goal.ycor};

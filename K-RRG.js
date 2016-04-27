@@ -15,7 +15,7 @@ function k_RRG(obstacles, nMilestone, x_init, xleft, xright, ybottom, ytop) {
         var nearestVertex = Nearest(graph, randVertex);
         var newVertex = steer(nearestVertex, randVertex);
         if (link(obstacles, nearestVertex, newVertex)) {
-            var k = 2 * Math.E ;
+            var k = 2 * Math.E *( Math.log(graph.nodeCount())/Math.log(10)) ;
             console.log('n count: ' +graph.nodeCount());
             console.log('k: '+k);
             var nearSet = kNearest(graph, newVertex, k );
